@@ -1,0 +1,130 @@
+# Кеш Android Studio и другие системные файлы
+.idea/*
+.gradle/
+local.properties
+.DS_Store
+
+# Настройки работы IDE
+*.iml
+*.hprof
+*.lock
+*.bak
+*.log
+
+# Кеш сборки
+/build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# Кеш сгенерированных файлов
+.cxx/
+.externalNativeBuild/
+*.class
+*.dex
+*.apk
+
+# Файлы данных и кеш Android-тестов
+jacoco/
+captured_test_output/
+
+# Файлы кэша библиотеки
+.ion/
+.navigation_closed/
+
+# Файл модуля NDK
+/.cxx/
+.Cxx
+
+# Файлы конфигурации сборки
+.gradle/
+.idea/
+local.properties
+app/build/
+app/release/
+app/debug/
+
+# Конфигурация SonarQube
+sonar/
+
+# Crashlytics и Fabric для Android
+crashlytics.properties
+crashlytics-build.properties
+fabric.properties
+
+# Другие специфичные настройки
+*.orig
+.env
+node_modules/
+npm-debug.log*
+
+# Кеш эмулятора Android
+*.hprof
+captures/
+
+# Кеш пользовательских данных
+*.apk
+*.ap_
+*.code-cache
+
+# Конфигурация Docker
+Dockerfile
+docker-compose.yml
+.env/.env
+
+# Файлы логов
+*.log
+
+# Папка поставок в проекте Java
+/supplier/
+
+# Файлы CI-CD
+.idea/httpRequests/
+
+# Сгенерированные файлы proguard
+proguard/
+
+# Файлы сетевого профилирования
+.trace
+
+# IDE-пользовательские сессии и ключевые карты
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/datagrip/
+.idea/no-lts/
+
+# CMake
+CMakeLists.txt.user
+cmake-build-*/
+
+# Visual Studio Code
+.vscode/
+
+# Flutter
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.flutter-plugins-dependencies
+
+# Google Возврат клиента Android
+.recommenders
+
+# Реквизиты Android 
+android/
+
+# Больше не используется
+test_apk/
+
+# Исключая стандартные файлы
+.jfrog/
+.idea/**/gradle.xml
+.idea/jarRepositories.xml
+
+# JAR
+*.jar
+*.war
+*.ear
+
+# Настройки результат сборки (не обходится)
+.gradle/
+build/
