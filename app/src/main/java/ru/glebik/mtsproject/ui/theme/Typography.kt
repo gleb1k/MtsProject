@@ -32,3 +32,9 @@ val Typography = Typography(
     )
     */
 )
+
+
+data class AppTypography(
+    val body: TextStyle,
+    val bodyBold: TextStyle,
+) //todo
