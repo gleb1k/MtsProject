@@ -8,8 +8,17 @@ object AppTheme {
     val colors: Colors
         @Composable
         get() = LocalCustomColors.current
+
+    val typography: AppTypography
+        @Composable
+        get() = LocalCustomTypography.current
+
 }
 
 val LocalCustomColors = staticCompositionLocalOf<Colors> {
+    error("No colors provided")
+}
+
+val LocalCustomTypography = staticCompositionLocalOf<AppTypography> {
     error("No colors provided")
 }

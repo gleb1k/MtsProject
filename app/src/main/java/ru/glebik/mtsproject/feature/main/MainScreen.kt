@@ -23,17 +23,45 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.glebik.mtsproject.R
+import ru.glebik.mtsproject.core.arch.util.ViewProperty
 import ru.glebik.mtsproject.ui.ContainerColumn
 import ru.glebik.mtsproject.ui.ContainerRow
 import ru.glebik.mtsproject.ui.IconContainer
+import ru.glebik.mtsproject.ui.screen.ErrorScreen
+import ru.glebik.mtsproject.ui.screen.LoaderScreen
 import ru.glebik.mtsproject.ui.theme.AppTheme
+import ru.glebik.mtsproject.ui.util.asString
 
 
 @Composable
 fun MainScreen(
-
+    viewModel: MainViewModel = hiltViewModel()
 ) {
+
+    val state = viewModel.state.collectAsStateWithLifecycle().value
+
+    when (val lockersState = state.lockers) {
+
+        is ViewProperty.Loading -> {
+            LoaderScreen()
+        }
+
+        is ViewProperty.Content -> {
+            MainContent(lockersState.content)
+        }
+
+        is ViewProperty.Error -> {
+            ErrorScreen(lockersState.errorMessage.asString())
+        }
+    }
+}
+
+@Composable
+private fun MainContent(lockers: List<LockerUiModel>) {
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -46,42 +74,56 @@ fun MainScreen(
         ),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        item {
-            ContainerRow(
-                contentPadding = PaddingValues(16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxHeight()
-                ) {
-                    IconContainer(
-                        iconRes = R.drawable.common_box_24,
-                        iconColor = AppTheme.colors.icon.onBlue,
-                        containerColor = AppTheme.colors.icon.blue
-                    )
-                    Column(
-                        Modifier.padding(horizontal = 12.dp)
-                    ) {
-                        Text("Мои аренды")
-                        Text("Нет активных аренд")
-                    }
-                }
 
-                Icon(
-                    painterResource(R.drawable.rounded_arrow_forward_24),
-                    contentDescription = "",
-                    tint = AppTheme.colors.icon.onGray,
-                    modifier = Modifier.size(20.dp)
+        item {
+            Header()
+        }
+
+        items(lockers) { locker ->
+            LockerItem(locker)
+        }
+    }
+}
+
+@Composable
+private fun Header() {
+    ContainerRow(
+        contentPadding = PaddingValues(16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxHeight()
+        ) {
+            IconContainer(
+                iconRes = R.drawable.common_box_24,
+                iconColor = AppTheme.colors.icon.onBlue,
+                containerColor = AppTheme.colors.icon.blue
+            )
+
+            Column(
+                Modifier.padding(horizontal = 12.dp)
+            ) {
+                Text(
+                    text = "Мои аренды",
+                    style = AppTheme.typography.title
+                )
+
+                Text(
+                    text = "Нет активных аренд",
+                    style = AppTheme.typography.caption
                 )
             }
         }
 
-        items(stubLockers) { locker ->
-            LockerItem(locker)
-        }
+        Icon(
+            painterResource(R.drawable.rounded_arrow_forward_24),
+            contentDescription = "",
+            tint = AppTheme.colors.icon.onGray,
+            modifier = Modifier.size(20.dp)
+        )
     }
 }
 
@@ -116,7 +158,10 @@ private fun LockerItem(
                 modifier = Modifier.size(20.dp)
             )
             Spacer(Modifier.size(4.dp))
-            Text(item.address)
+            Text(
+                text = item.address,
+                style = AppTheme.typography.body
+            )
         }
         Text(
             text = buildAnnotatedString {
@@ -130,6 +175,7 @@ private fun LockerItem(
 
                 append(" из ${item.maxAvailableCells}")
             },
+            style = AppTheme.typography.body
         )
     }
 }

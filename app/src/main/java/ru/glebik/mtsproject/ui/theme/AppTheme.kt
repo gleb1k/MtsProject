@@ -17,9 +17,12 @@ fun AppTheme(
         else -> LightColorPalette
     }
 
+    val typography: AppTypography = appTypography
+
     CompositionLocalProvider(
         *providedValues,
         LocalCustomColors provides colors,
+        LocalCustomTypography provides typography,
         content = content
     )
 }

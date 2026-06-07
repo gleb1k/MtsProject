@@ -1,40 +1,39 @@
 package ru.glebik.mtsproject.ui.theme
 
-import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
-// Set of Material typography styles to start with
-val Typography = Typography(
-    bodyLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.5.sp
-    )
-    /* Other default text styles to override
-    titleLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 22.sp,
-        lineHeight = 28.sp,
-        letterSpacing = 0.sp
-    ),
-    labelSmall = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Medium,
-        fontSize = 11.sp,
-        lineHeight = 16.sp,
-        letterSpacing = 0.5.sp
-    )
-    */
+data class AppTypography(
+    val header: TextStyle,    // крупные заголовки экранов
+    val title: TextStyle,     // заголовки карточек
+    val body: TextStyle,      // основной текст
+    val caption: TextStyle,   // вторичный текст
+    val button: TextStyle     // кнопки
 )
 
+internal val appTypography = AppTypography(
+    header = TextStyle(
+        fontSize = 26.sp,
+        lineHeight = 30.sp
+    ),
 
-data class AppTypography(
-    val body: TextStyle,
-    val bodyBold: TextStyle,
-) //todo
+    title = TextStyle(
+        fontSize = 16.sp,
+        lineHeight = 20.sp
+    ),
+
+    body = TextStyle(
+        fontSize = 14.sp,
+        lineHeight = 18.sp
+    ),
+
+    caption = TextStyle(
+        fontSize = 12.sp,
+        lineHeight = 16.sp
+    ),
+
+    button = TextStyle(
+        fontSize = 15.sp,
+        lineHeight = 18.sp
+    )
+)

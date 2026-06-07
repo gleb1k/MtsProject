@@ -1,8 +1,10 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.kotlin.ksp)
 }
 
 android {
@@ -51,6 +53,7 @@ dependencies {
 
     // Core
     implementation(libs.androidx.core.ktx)
+    ksp(libs.kotlin.metadata.jvm)
 
     // Lifecycle
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -77,7 +80,10 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.retrofit.converter.kotlinx.serialization)
 
-    // Hilt Navigation
+    // Hilt
+    implementation(libs.andoridx.hiltNavigationCompose)
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.android.compiler)
     implementation(libs.andoridx.hiltNavigationCompose)
 
     // Tests
