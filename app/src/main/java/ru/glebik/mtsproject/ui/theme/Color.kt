@@ -18,7 +18,7 @@ internal val LightColorPalette = Colors(
         secondary = Color(0xFF6B7280),
     ),
     frame = Colors.Frame(
-        primary = Color(0xFF155dfc),
+        primary = Color(0xFF00B956),
         onPrimary = Color(0xFFFFFFFF),
         active = Color(0xFF86AD87),
         onActive = Color(0xFF4CAF50),
@@ -47,8 +47,8 @@ internal val DarkColorPalette = Colors(
         secondary = Color(0xFF9CA3AF),
     ),
     frame = Colors.Frame(
-        primary = Color(0xFF3B82F6),
-        onPrimary = Color(0xFF0B0F19),
+        primary = Color(0xFF00B956),
+        onPrimary = Color(0xFFFFFFFF),
         active = Color(0xFF22C55E),
         onActive = Color(0xFF052E16),
         surface = Color(0xFF1A1B1E),

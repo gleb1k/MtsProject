@@ -1,0 +1,53 @@
+package ru.glebik.mtsproject.feature.locker_detail
+
+import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
+import ru.glebik.mtsproject.core.arch.BaseViewModel
+import ru.glebik.mtsproject.core.arch.util.ViewProperty
+import ru.glebik.mtsproject.core.util.UiText
+import ru.glebik.mtsproject.feature.locker_detail.data.LockerDetailRepository
+import javax.inject.Inject
+
+@HiltViewModel
+class LockerDetailViewModel @Inject constructor(
+    private val repository: LockerDetailRepository,
+) : BaseViewModel<LockerDetailUiState, LockerDetailEffect, LockerDetailIntent>() {
+
+    override fun initialState(): LockerDetailUiState = LockerDetailUiState()
+
+    override fun handleIntent(intent: LockerDetailIntent) {
+        when (intent) {
+            is LockerDetailIntent.Load -> loadLocker(intent.lockerId)
+            LockerDetailIntent.Back -> navigateBack()
+        }
+    }
+
+    private fun loadLocker(lockerId: Long) {
+        viewModelScope.launchSafe {
+            mutableState.value = mutableState.value.copy(
+                locker = ViewProperty.Loading,
+            )
+
+            try {
+                val data = repository.getLockerDetail(lockerId)
+
+                mutableState.value = mutableState.value.copy(
+                    locker = ViewProperty.Content(data),
+                )
+            } catch (e: Exception) {
+                mutableState.value = mutableState.value.copy(
+                    locker = ViewProperty.Error(
+                        errorMessage = UiText.DynamicString("Ошибка загрузки"),
+                        error = e,
+                    )
+                )
+            }
+        }
+    }
+
+    private fun navigateBack() {
+        viewModelScope.launchSafe {
+            mutableEffect.emit(LockerDetailEffect.NavigateBack)
+        }
+    }
+}

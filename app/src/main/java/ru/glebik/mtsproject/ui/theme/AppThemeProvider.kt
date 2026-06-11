@@ -13,6 +13,10 @@ object AppTheme {
         @Composable
         get() = LocalCustomTypography.current
 
+    val shapes: AppShapes
+        @Composable
+        get() = LocalCustomShapes.current
+
 }
 
 val LocalCustomColors = staticCompositionLocalOf<Colors> {
@@ -21,4 +25,8 @@ val LocalCustomColors = staticCompositionLocalOf<Colors> {
 
 val LocalCustomTypography = staticCompositionLocalOf<AppTypography> {
     error("No colors provided")
+}
+
+val LocalCustomShapes = staticCompositionLocalOf<AppShapes> {
+    error("No shapes provided")
 }

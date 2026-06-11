@@ -65,6 +65,11 @@ dependencies {
     implementation(libs.jetbrains.kotlinxCoroutinesCore)
     implementation(libs.jetbrains.kotlinxCollectionsImmutable)
 
+    // Navigation 3
+    implementation(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.navigation3.ui)
+    implementation(libs.androidx.lifecycleViewmodelNavigation3)
+
     // Compose
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))

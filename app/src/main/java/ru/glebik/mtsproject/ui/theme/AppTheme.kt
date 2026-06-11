@@ -18,11 +18,13 @@ fun AppTheme(
     }
 
     val typography: AppTypography = appTypography
+    val shapes: AppShapes = appShapes
 
     CompositionLocalProvider(
         *providedValues,
         LocalCustomColors provides colors,
         LocalCustomTypography provides typography,
+        LocalCustomShapes provides shapes,
         content = content
     )
 }

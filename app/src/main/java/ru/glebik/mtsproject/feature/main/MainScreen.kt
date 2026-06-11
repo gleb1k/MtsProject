@@ -1,5 +1,6 @@
 package ru.glebik.mtsproject.feature.main
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,9 +29,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.glebik.mtsproject.R
 import ru.glebik.mtsproject.core.arch.util.ViewProperty
-import ru.glebik.mtsproject.ui.ContainerColumn
-import ru.glebik.mtsproject.ui.ContainerRow
-import ru.glebik.mtsproject.ui.IconContainer
+import ru.glebik.mtsproject.ui.common.ContainerColumn
+import ru.glebik.mtsproject.ui.common.ContainerRow
+import ru.glebik.mtsproject.ui.common.IconContainer
 import ru.glebik.mtsproject.ui.screen.ErrorScreen
 import ru.glebik.mtsproject.ui.screen.LoaderScreen
 import ru.glebik.mtsproject.ui.theme.AppTheme
@@ -38,7 +40,9 @@ import ru.glebik.mtsproject.ui.util.asString
 
 @Composable
 fun MainScreen(
-    viewModel: MainViewModel = hiltViewModel()
+    onNavigateToProfile: () -> Unit,
+    onNavigateToLockerDetail: (Long) -> Unit,
+    viewModel: MainViewModel = hiltViewModel(),
 ) {
 
     val state = viewModel.state.collectAsStateWithLifecycle().value
@@ -50,7 +54,11 @@ fun MainScreen(
         }
 
         is ViewProperty.Content -> {
-            MainContent(lockersState.content)
+            MainContent(
+                lockers = lockersState.content,
+                onNavigateToProfile = onNavigateToProfile,
+                onNavigateToLockerDetail = onNavigateToLockerDetail,
+            )
         }
 
         is ViewProperty.Error -> {
@@ -60,7 +68,11 @@ fun MainScreen(
 }
 
 @Composable
-private fun MainContent(lockers: List<LockerUiModel>) {
+private fun MainContent(
+    lockers: List<LockerUiModel>,
+    onNavigateToProfile: () -> Unit,
+    onNavigateToLockerDetail: (Long) -> Unit,
+) {
 
     LazyColumn(
         modifier = Modifier
@@ -76,11 +88,44 @@ private fun MainContent(lockers: List<LockerUiModel>) {
     ) {
 
         item {
+            MainTopBar(onNavigateToProfile = onNavigateToProfile)
+        }
+
+        item {
             Header()
         }
 
         items(lockers) { locker ->
-            LockerItem(locker)
+            LockerItem(
+                item = locker,
+                onClick = { onNavigateToLockerDetail(locker.id) },
+            )
+        }
+    }
+}
+
+@Composable
+private fun MainTopBar(
+    onNavigateToProfile: () -> Unit,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = "Постоматы",
+            style = AppTheme.typography.header,
+            color = AppTheme.colors.text.primary,
+        )
+
+        IconButton(onClick = onNavigateToProfile) {
+            Icon(
+                painter = painterResource(R.drawable.person_24),
+                contentDescription = null,
+                tint = AppTheme.colors.frame.primary,
+                modifier = Modifier.size(24.dp),
+            )
         }
     }
 }
@@ -91,7 +136,7 @@ private fun Header() {
         contentPadding = PaddingValues(16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -130,10 +175,13 @@ private fun Header() {
 @Composable
 private fun LockerItem(
     item: LockerUiModel,
+    onClick: () -> Unit,
 ) {
     ContainerColumn(
         contentPadding = PaddingValues(16.dp),
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
     ) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,

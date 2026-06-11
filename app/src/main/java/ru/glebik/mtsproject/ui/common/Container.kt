@@ -1,4 +1,4 @@
-package ru.glebik.mtsproject.ui
+package ru.glebik.mtsproject.ui.common
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
