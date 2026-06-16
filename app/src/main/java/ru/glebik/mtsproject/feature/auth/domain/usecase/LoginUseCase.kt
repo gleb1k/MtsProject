@@ -28,7 +28,7 @@ class LoginUseCaseImpl @Inject constructor(
                                     u.phone.equals(login, ignoreCase = true))
                 } ?: throw IllegalArgumentException("Пользователь не найден")
 
-                userSession.saveUser(user.id)
+                userSession.saveUser(user)
             }
     }
 }

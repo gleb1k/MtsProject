@@ -5,8 +5,8 @@ import ru.glebik.mtsproject.core.arch.UiIntent
 import ru.glebik.mtsproject.core.arch.UiState
 
 data class ProfileUiState(
-    val nickname: String = "aaa",
-    val email: String = "gleb.gafeev2@mail.ru",
+    val nickname: String,
+    val email: String,
 ) : UiState
 
 sealed interface ProfileIntent : UiIntent {

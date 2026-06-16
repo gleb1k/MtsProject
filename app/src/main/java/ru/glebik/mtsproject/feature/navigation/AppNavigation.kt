@@ -1,5 +1,11 @@
 package ru.glebik.mtsproject.feature.navigation
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -17,6 +23,8 @@ import ru.glebik.mtsproject.feature.main.MainScreen
 import ru.glebik.mtsproject.feature.onboarding.OnboardingScreen
 import ru.glebik.mtsproject.feature.profile.ProfileScreen
 
+const val TRANSITION_ANIMATION_DURATION_MS = 350
+
 @Composable
 fun AppNavigation(
     viewModel: AppNavViewModel = hiltViewModel(),
@@ -27,11 +35,37 @@ fun AppNavigation(
     NavDisplay(
         modifier = Modifier.fillMaxSize(),
         backStack = backStack,
-        onBack = { backStack.removeLastOrNull() },
         entryDecorators = listOf(
             rememberSaveableStateHolderNavEntryDecorator(),
             rememberViewModelStoreNavEntryDecorator(),
         ),
+        transitionSpec = {
+            slideInHorizontally(
+                initialOffsetX = { it },
+                animationSpec = tween(TRANSITION_ANIMATION_DURATION_MS)
+            ) togetherWith slideOutHorizontally(
+                targetOffsetX = { -it / 4 },
+                animationSpec = tween(TRANSITION_ANIMATION_DURATION_MS),
+            )
+        },
+        popTransitionSpec = {
+            fadeIn(tween(TRANSITION_ANIMATION_DURATION_MS)) + slideInHorizontally(
+                initialOffsetX = { -it },
+                animationSpec = tween(TRANSITION_ANIMATION_DURATION_MS),
+            ) togetherWith slideOutHorizontally(
+                targetOffsetX = { it },
+                animationSpec = tween(TRANSITION_ANIMATION_DURATION_MS),
+            ) + fadeOut(tween(TRANSITION_ANIMATION_DURATION_MS))
+        },
+        predictivePopTransitionSpec = {
+            slideInHorizontally(
+                animationSpec = tween(TRANSITION_ANIMATION_DURATION_MS),
+                initialOffsetX = { -it / 4 },
+            ) togetherWith slideOutHorizontally(
+                animationSpec = tween(TRANSITION_ANIMATION_DURATION_MS),
+                targetOffsetX = { it },
+            )
+        },
         entryProvider = entryProvider {
             entry<OnboardingNavKey> {
                 OnboardingScreen(

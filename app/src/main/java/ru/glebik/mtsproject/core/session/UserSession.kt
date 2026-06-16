@@ -1,6 +1,7 @@
 package ru.glebik.mtsproject.core.session
 
 import android.content.Context
+import ru.glebik.mtsproject.feature.auth.domain.model.User
 import javax.inject.Inject
 import androidx.core.content.edit
 
@@ -10,14 +11,27 @@ class UserSession @Inject constructor(
 
     private val prefs = context.getSharedPreferences("user_session", Context.MODE_PRIVATE)
 
-    fun saveUser(userId: String) {
+    fun saveUser(user: User) {
         prefs.edit {
-            putString(KEY_USER_ID, userId)
+            putString(KEY_ID, user.id)
+                .putString(KEY_NAME, user.fullName)
+                .putString(KEY_EMAIL, user.email)
         }
     }
 
-    fun getUser(): String? {
-        return prefs.getString(KEY_USER_ID, null)
+    fun getUser(): User? {
+        val id = prefs.getString(KEY_ID, null) ?: return null
+        val name = prefs.getString(KEY_NAME, null)
+        val email = prefs.getString(KEY_EMAIL, null)
+
+        return User(
+            id = id,
+            fullName = name.orEmpty(),
+            email = email.orEmpty(),
+            phone = "",
+            status = "",
+            createdAt = ""
+        )
     }
 
     fun clear() {
@@ -29,6 +43,8 @@ class UserSession @Inject constructor(
     }
 
     private companion object {
-        const val KEY_USER_ID = "key_user_id"
+        const val KEY_ID = "key_id"
+        const val KEY_NAME = "key_name"
+        const val KEY_EMAIL = "key_email"
     }
 }

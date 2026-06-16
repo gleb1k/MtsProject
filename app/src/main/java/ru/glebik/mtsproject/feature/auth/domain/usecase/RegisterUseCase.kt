@@ -27,7 +27,7 @@ class RegisterUseCaseImpl @Inject constructor(
             email = email,
             phone = phone,
         ).mapCatching { user ->
-            userSession.saveUser(user.id)
+            userSession.saveUser(user)
         }
     }
 }

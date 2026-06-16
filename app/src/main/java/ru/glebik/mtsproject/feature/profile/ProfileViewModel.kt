@@ -3,19 +3,29 @@ package ru.glebik.mtsproject.feature.profile
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ru.glebik.mtsproject.core.arch.BaseViewModel
+import ru.glebik.mtsproject.core.session.UserSession
 import javax.inject.Inject
 
 @HiltViewModel
-class ProfileViewModel @Inject constructor() :
+class ProfileViewModel @Inject constructor(
+    private val userSession: UserSession,
+) :
     BaseViewModel<ProfileUiState, ProfileEffect, ProfileIntent>() {
 
-    override fun initialState(): ProfileUiState = ProfileUiState()
+    override fun initialState(): ProfileUiState {
+        val user = userSession.getUser()
+
+        return ProfileUiState(
+            nickname = user?.fullName.orEmpty(),
+            email = user?.email.orEmpty()
+        )
+    }
 
     override fun handleIntent(intent: ProfileIntent) {
         when (intent) {
             ProfileIntent.Back -> navigateBack()
             ProfileIntent.OpenRentals -> navigateToMain()
-            ProfileIntent.Logout -> navigateToOnboarding()
+            ProfileIntent.Logout -> logout()
         }
     }
 
@@ -31,7 +41,9 @@ class ProfileViewModel @Inject constructor() :
         }
     }
 
-    private fun navigateToOnboarding() {
+    private fun logout() {
+        userSession.clear()
+
         viewModelScope.launchSafe {
             mutableEffect.emit(ProfileEffect.NavigateToOnboarding)
         }
