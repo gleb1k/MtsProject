@@ -28,6 +28,7 @@ internal val LightColorPalette = Colors(
         onButton = Color(0xFFFFFFFF),
         background = Color(0xFFf9fafb),
         divider = Color(0xFFEFF1F4),
+        error = Color(0xFFEF4444),
     )
 )
 
@@ -57,6 +58,7 @@ internal val DarkColorPalette = Colors(
         onButton = Color(0xFF030213),
         background = Color(0xFF0B0F19),
         divider = Color(0xFF31363C),
+        error = Color(0xFFEF4444),
     )
 )
 
@@ -92,5 +94,6 @@ data class Colors(
         val onButton: Color,
         val background: Color,
         val divider: Color,
+        val error: Color,
     )
 }

@@ -6,7 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.Surface
 import dagger.hilt.android.AndroidEntryPoint
-import ru.glebik.mtsproject.core.navigation.AppNavigation
+import ru.glebik.mtsproject.feature.navigation.AppNavigation
 import ru.glebik.mtsproject.ui.theme.AppTheme
 
 @AndroidEntryPoint

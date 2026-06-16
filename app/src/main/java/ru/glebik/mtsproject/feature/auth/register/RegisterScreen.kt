@@ -1,6 +1,7 @@
-package ru.glebik.mtsproject.feature.register
+package ru.glebik.mtsproject.feature.auth.register
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
@@ -45,8 +47,7 @@ fun RegisterScreen(
         onBackClick = { viewModel.handleIntent(RegisterIntent.Back) },
         onNicknameChange = { viewModel.handleIntent(RegisterIntent.NicknameChanged(it)) },
         onEmailChange = { viewModel.handleIntent(RegisterIntent.EmailChanged(it)) },
-        onPasswordChange = { viewModel.handleIntent(RegisterIntent.PasswordChanged(it)) },
-        onTogglePasswordVisibility = { viewModel.handleIntent(RegisterIntent.TogglePasswordVisibility) },
+        onPhoneChange = { viewModel.handleIntent(RegisterIntent.PhoneChanged(it)) },
         onSubmitClick = { viewModel.handleIntent(RegisterIntent.Submit) },
         onLoginClick = { viewModel.handleIntent(RegisterIntent.Login) },
     )
@@ -58,8 +59,7 @@ private fun RegisterContent(
     onBackClick: () -> Unit,
     onNicknameChange: (String) -> Unit,
     onEmailChange: (String) -> Unit,
-    onPasswordChange: (String) -> Unit,
-    onTogglePasswordVisibility: () -> Unit,
+    onPhoneChange: (String) -> Unit,
     onSubmitClick: () -> Unit,
     onLoginClick: () -> Unit,
 ) {
@@ -104,21 +104,28 @@ private fun RegisterContent(
             Spacer(modifier = Modifier.height(16.dp))
 
             AppTextField(
-                label = "Пароль",
-                value = state.password,
-                onValueChange = onPasswordChange,
-                placeholder = "Минимум 6 символов",
-                keyboardType = KeyboardType.Password,
-                isPassword = true,
-                isPasswordVisible = state.isPasswordVisible,
-                onTogglePasswordVisibility = onTogglePasswordVisibility,
+                label = "Телефон",
+                value = state.phone,
+                onValueChange = onPhoneChange,
+                placeholder = "+7 999 999 99 99",
+                keyboardType = KeyboardType.Phone,
             )
 
             Spacer(modifier = Modifier.height(24.dp))
 
+            if (!state.error.isNullOrBlank()) {
+                Text(
+                    text = state.error,
+                    color = AppTheme.colors.frame.error,
+                    modifier = Modifier.padding(horizontal = 4.dp)
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+            }
+
             PrimaryButton(
                 text = "Зарегистрироваться",
                 onClick = onSubmitClick,
+                loading = state.isLoading
             )
 
             Spacer(modifier = Modifier.height(24.dp))

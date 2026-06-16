@@ -1,4 +1,4 @@
-package ru.glebik.mtsproject.core.navigation
+package ru.glebik.mtsproject.feature.navigation
 
 import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable

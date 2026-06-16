@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,21 +28,37 @@ private val DangerColor = Color(0xFFEF4444)
 fun PrimaryButton(
     text: String,
     onClick: () -> Unit,
+    loading: Boolean = false,
+    enabled: Boolean = true,
 ) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .clip(AppTheme.shapes.default)
-            .background(AppTheme.colors.frame.primary)
-            .clickable(onClick = onClick)
+            .background(
+                if (enabled && !loading) AppTheme.colors.frame.primary
+                else AppTheme.colors.frame.primary.copy(alpha = 0.5f)
+            )
+            .clickable(
+                enabled = enabled && !loading,
+                onClick = onClick
+            )
             .padding(vertical = 16.dp),
         contentAlignment = Alignment.Center,
     ) {
-        Text(
-            text = text,
-            style = AppTheme.typography.button.copy(fontWeight = FontWeight.Bold),
-            color = AppTheme.colors.frame.onPrimary,
-        )
+        if (loading) {
+            CircularProgressIndicator(
+                color = AppTheme.colors.frame.onPrimary,
+                strokeWidth = 2.dp,
+                modifier = Modifier.size(20.dp)
+            )
+        } else {
+            Text(
+                text = text,
+                style = AppTheme.typography.button.copy(fontWeight = FontWeight.Bold),
+                color = AppTheme.colors.frame.onPrimary,
+            )
+        }
     }
 }
 

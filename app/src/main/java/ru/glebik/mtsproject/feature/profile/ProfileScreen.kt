@@ -83,7 +83,6 @@ private fun ProfileContent(
         AppHeader(
             title = "",
             onBackClick = onBackClick,
-            backLabel = "Назад",
             horizontalAlignment = Alignment.CenterHorizontally,
             bottomPadding = 24.dp,
             bottomContent = {

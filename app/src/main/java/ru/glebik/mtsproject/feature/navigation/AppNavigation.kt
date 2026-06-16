@@ -1,8 +1,9 @@
-package ru.glebik.mtsproject.core.navigation
+package ru.glebik.mtsproject.feature.navigation
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
@@ -13,11 +14,14 @@ import ru.glebik.mtsproject.feature.locker_detail.LockerDetailScreen
 import ru.glebik.mtsproject.feature.main.MainScreen
 import ru.glebik.mtsproject.feature.onboarding.OnboardingScreen
 import ru.glebik.mtsproject.feature.profile.ProfileScreen
-import ru.glebik.mtsproject.feature.register.RegisterScreen
+import ru.glebik.mtsproject.feature.auth.register.RegisterScreen
 
 @Composable
-fun AppNavigation() {
-    val backStack = rememberNavBackStack(OnboardingNavKey)
+fun AppNavigation(
+    viewModel: AppNavViewModel = hiltViewModel(),
+) {
+    val start = viewModel.startDestination()
+    val backStack = rememberNavBackStack(start)
 
     NavDisplay(
         modifier = Modifier.fillMaxSize(),
@@ -32,10 +36,8 @@ fun AppNavigation() {
                 OnboardingScreen(
                     onNavigateToRegister = { backStack.add(RegisterNavKey) },
                     onNavigateToMain = {
-                        backStack.run {
-                            clear()
-                            add(MainNavKey)
-                        }
+                        backStack.clear()
+                        backStack.add(MainNavKey)
                     },
                 )
             }
@@ -44,10 +46,8 @@ fun AppNavigation() {
                 RegisterScreen(
                     onNavigateBack = { backStack.removeLastOrNull() },
                     onNavigateToMain = {
-                        backStack.run {
-                            clear()
-                            add(MainNavKey)
-                        }
+                        backStack.clear()
+                        backStack.add(MainNavKey)
                     },
                 )
             }
@@ -65,8 +65,8 @@ fun AppNavigation() {
                 LockerDetailScreen(
                     lockerId = key.lockerId,
                     onNavigateBack = { backStack.removeLastOrNull() },
-                    onNavigateToCellActivation = { cellNumber ->
-                        backStack.add(CellActivationNavKey(key.lockerId, cellNumber))
+                    onNavigateToCellActivation = { cell ->
+                        backStack.add(CellActivationNavKey(key.lockerId, cell))
                     },
                 )
             }
@@ -84,10 +84,8 @@ fun AppNavigation() {
                     onNavigateBack = { backStack.removeLastOrNull() },
                     onNavigateToMain = { backStack.removeLastOrNull() },
                     onNavigateToOnboarding = {
-                        backStack.run {
-                            clear()
-                            add(OnboardingNavKey)
-                        }
+                        backStack.clear()
+                        backStack.add(OnboardingNavKey)
                     },
                 )
             }

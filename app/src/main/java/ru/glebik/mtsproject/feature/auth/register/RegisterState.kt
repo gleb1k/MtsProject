@@ -1,4 +1,4 @@
-package ru.glebik.mtsproject.feature.register
+package ru.glebik.mtsproject.feature.auth.register
 
 import ru.glebik.mtsproject.core.arch.UiEffect
 import ru.glebik.mtsproject.core.arch.UiIntent
@@ -7,15 +7,16 @@ import ru.glebik.mtsproject.core.arch.UiState
 data class RegisterUiState(
     val nickname: String = "",
     val email: String = "",
-    val password: String = "",
-    val isPasswordVisible: Boolean = false,
+    val phone: String = "",
+
+    val isLoading: Boolean = false,
+    val error: String? = null,
 ) : UiState
 
 sealed interface RegisterIntent : UiIntent {
     data class NicknameChanged(val value: String) : RegisterIntent
     data class EmailChanged(val value: String) : RegisterIntent
-    data class PasswordChanged(val value: String) : RegisterIntent
-    data object TogglePasswordVisibility : RegisterIntent
+    data class PhoneChanged(val value: String) : RegisterIntent
     data object Back : RegisterIntent
     data object Submit : RegisterIntent
     data object Login : RegisterIntent
