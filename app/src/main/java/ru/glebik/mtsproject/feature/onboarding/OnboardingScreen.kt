@@ -1,6 +1,7 @@
 package ru.glebik.mtsproject.feature.onboarding
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,6 +34,7 @@ import ru.glebik.mtsproject.ui.theme.AppTheme
 fun OnboardingScreen(
     onNavigateToRegister: () -> Unit,
     onNavigateToMain: () -> Unit,
+    onNavigateToLogin: () -> Unit,
     viewModel: OnboardingViewModel = hiltViewModel(),
 ) {
     LaunchedEffect(viewModel) {
@@ -40,6 +42,7 @@ fun OnboardingScreen(
             when (effect) {
                 OnboardingEffect.NavigateToRegister -> onNavigateToRegister()
                 OnboardingEffect.NavigateToMain -> onNavigateToMain()
+                OnboardingEffect.NavigateToLogin -> onNavigateToLogin()
             }
         }
     }
@@ -47,6 +50,7 @@ fun OnboardingScreen(
     OnboardingContent(
         onRegisterClick = { viewModel.handleIntent(OnboardingIntent.Register) },
         onLoginClick = { viewModel.handleIntent(OnboardingIntent.Login) },
+        onLogoClick = { viewModel.handleIntent(OnboardingIntent.Main) }
     )
 }
 
@@ -54,6 +58,7 @@ fun OnboardingScreen(
 private fun OnboardingContent(
     onRegisterClick: () -> Unit,
     onLoginClick: () -> Unit,
+    onLogoClick: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -69,7 +74,7 @@ private fun OnboardingContent(
         ) {
             Spacer(modifier = Modifier.weight(1f))
 
-            LogoBlock()
+            LogoBlock(onNavigateToMain = onLogoClick)
 
             Spacer(modifier = Modifier.height(32.dp))
 
@@ -114,12 +119,17 @@ private fun OnboardingContent(
 }
 
 @Composable
-private fun LogoBlock() {
+private fun LogoBlock(
+    onNavigateToMain: () -> Unit,
+) {
     Box(
         modifier = Modifier
             .size(88.dp)
             .clip(AppTheme.shapes.default)
-            .background(AppTheme.colors.frame.primary),
+            .background(AppTheme.colors.frame.primary)
+            .clickable {
+                onNavigateToMain()
+            },
         contentAlignment = Alignment.Center,
     ) {
         Icon(

@@ -10,4 +10,6 @@ interface AuthRepository {
         email: String,
         phone: String,
     ): Result<User>
+
+    suspend fun getUsers(): Result<List<User>>
 }

@@ -14,13 +14,20 @@ class OnboardingViewModel @Inject constructor() :
     override fun handleIntent(intent: OnboardingIntent) {
         when (intent) {
             OnboardingIntent.Register -> navigateToRegister()
-            OnboardingIntent.Login -> navigateToMain()
+            OnboardingIntent.Login -> navigateToLogin()
+            OnboardingIntent.Main -> navigateToMain()
         }
     }
 
     private fun navigateToRegister() {
         viewModelScope.launchSafe {
             mutableEffect.emit(OnboardingEffect.NavigateToRegister)
+        }
+    }
+
+    private fun navigateToLogin() {
+        viewModelScope.launchSafe {
+            mutableEffect.emit(OnboardingEffect.NavigateToLogin)
         }
     }
 

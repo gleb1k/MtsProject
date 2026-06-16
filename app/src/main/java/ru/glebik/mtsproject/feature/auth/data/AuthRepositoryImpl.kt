@@ -29,4 +29,13 @@ class AuthRepositoryImpl @Inject constructor(
             response.toDomain()
         }
     }
+
+    override suspend fun getUsers(): Result<List<User>> {
+        return runCatching {
+            api.getUsers(
+                skip = 0,
+                limit = 100
+            ).map { it.toDomain() }
+        }
+    }
 }

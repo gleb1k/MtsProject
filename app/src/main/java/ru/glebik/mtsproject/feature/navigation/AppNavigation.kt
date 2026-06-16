@@ -9,12 +9,13 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
+import ru.glebik.mtsproject.feature.auth.login.LoginScreen
+import ru.glebik.mtsproject.feature.auth.register.RegisterScreen
 import ru.glebik.mtsproject.feature.cell_activation.CellActivationScreen
 import ru.glebik.mtsproject.feature.locker_detail.LockerDetailScreen
 import ru.glebik.mtsproject.feature.main.MainScreen
 import ru.glebik.mtsproject.feature.onboarding.OnboardingScreen
 import ru.glebik.mtsproject.feature.profile.ProfileScreen
-import ru.glebik.mtsproject.feature.auth.register.RegisterScreen
 
 @Composable
 fun AppNavigation(
@@ -39,11 +40,24 @@ fun AppNavigation(
                         backStack.clear()
                         backStack.add(MainNavKey)
                     },
+                    onNavigateToLogin = {
+                        backStack.add(LoginNavKey)
+                    }
                 )
             }
 
             entry<RegisterNavKey> {
                 RegisterScreen(
+                    onNavigateBack = { backStack.removeLastOrNull() },
+                    onNavigateToMain = {
+                        backStack.clear()
+                        backStack.add(MainNavKey)
+                    },
+                )
+            }
+
+            entry<LoginNavKey> {
+                LoginScreen(
                     onNavigateBack = { backStack.removeLastOrNull() },
                     onNavigateToMain = {
                         backStack.clear()

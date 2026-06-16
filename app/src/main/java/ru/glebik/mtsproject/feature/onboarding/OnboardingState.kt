@@ -11,9 +11,12 @@ data class OnboardingUiState(
 sealed interface OnboardingIntent : UiIntent {
     data object Register : OnboardingIntent
     data object Login : OnboardingIntent
+
+    data object Main : OnboardingIntent
 }
 
 sealed interface OnboardingEffect : UiEffect {
     data object NavigateToRegister : OnboardingEffect
     data object NavigateToMain : OnboardingEffect
+    data object NavigateToLogin : OnboardingEffect
 }
