@@ -7,13 +7,15 @@ import ru.glebik.mtsproject.core.arch.BaseViewModel
 import ru.glebik.mtsproject.core.arch.util.ViewProperty
 import ru.glebik.mtsproject.core.session.UserSession
 import ru.glebik.mtsproject.core.util.UiText
-import ru.glebik.mtsproject.feature.main.data.LockersRepository
+import ru.glebik.mtsproject.feature.locker.domain.GetLockersUseCase
+import ru.glebik.mtsproject.feature.locker.data.model.LockerResponse
+import ru.glebik.mtsproject.feature.locker.domain.model.Locker
 import javax.inject.Inject
 
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val repository: LockersRepository,
+    private val getLockersUseCase: GetLockersUseCase,
     private val userSession: UserSession,
 ) : BaseViewModel<MainUiState, MainEffect, MainIntent>() {
 
@@ -42,7 +44,9 @@ class MainViewModel @Inject constructor(
             }
 
             try {
-                val data = repository.getLockers()
+                val result = getLockersUseCase()
+
+                val data = result.getOrThrow().map { lockerResponse -> lockerResponse.toUiModel() }
 
                 mutableState.value = mutableState.value.copy(
                     lockers = ViewProperty.Content(data)
@@ -57,5 +61,15 @@ class MainViewModel @Inject constructor(
                 )
             }
         }
+    }
+
+    private fun Locker.toUiModel(): LockerUiModel {
+        return LockerUiModel(
+            id = id.hashCode().toLong(),
+            name = title,
+            address = address,
+            currentAvailableCells = 0,
+            maxAvailableCells = 0,
+        )
     }
 }

@@ -16,6 +16,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -143,21 +146,16 @@ private fun LogoBlock(
 
 @Composable
 private fun TitleBlock() {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Text(
-            text = "Мегафон",
-            style = AppTheme.typography.header.copy(fontWeight = FontWeight.Bold),
-            color = AppTheme.colors.text.primary,
-            textAlign = TextAlign.Center,
-        )
-
-        Text(
-            text = "Постоматы",
-            style = AppTheme.typography.header.copy(fontWeight = FontWeight.Bold),
-            color = AppTheme.colors.frame.primary,
-            textAlign = TextAlign.Center,
-        )
-    }
+    Text(
+        text = buildAnnotatedString {
+            withStyle(style = SpanStyle(color = AppTheme.colors.text.primary)) {
+                append("Smart")
+            }
+            withStyle(style = SpanStyle(color = AppTheme.colors.frame.primary)) {
+                append("Locker")
+            }
+        },
+        style = AppTheme.typography.header.copy(fontWeight = FontWeight.Bold),
+        textAlign = TextAlign.Center,
+    )
 }

@@ -2,10 +2,14 @@ package ru.glebik.mtsproject.feature.auth.di
 
 import dagger.Binds
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import jakarta.inject.Singleton
+import retrofit2.Retrofit
+import retrofit2.create
 import ru.glebik.mtsproject.feature.auth.data.AuthRepositoryImpl
+import ru.glebik.mtsproject.feature.auth.data.api.AuthApi
 import ru.glebik.mtsproject.feature.auth.domain.AuthRepository
 import ru.glebik.mtsproject.feature.auth.domain.usecase.LoginUseCase
 import ru.glebik.mtsproject.feature.auth.domain.usecase.LoginUseCaseImpl
@@ -18,7 +22,6 @@ import ru.glebik.mtsproject.feature.auth.domain.usecase.RegisterUseCaseImpl
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class AuthModule {
-
     @Binds
     @Singleton
     abstract fun bindAuthRepository(
@@ -36,4 +39,16 @@ abstract class AuthModule {
     abstract fun bindLoginUseCase(
         impl: LoginUseCaseImpl,
     ): LoginUseCase
+
+    companion object {
+
+        @Provides
+        @Singleton
+        fun provideAuthApi(
+            retrofit: Retrofit,
+        ): AuthApi {
+            return retrofit.create()
+        }
+
+    }
 }
