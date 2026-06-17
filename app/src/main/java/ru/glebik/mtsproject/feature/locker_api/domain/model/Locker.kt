@@ -14,6 +14,7 @@ data class Locker(
 ) {
     enum class Status {
         ACTIVE,
-        INACTIVE,
+        OFFLINE,
+        MAINTENANCE,
     }
 }

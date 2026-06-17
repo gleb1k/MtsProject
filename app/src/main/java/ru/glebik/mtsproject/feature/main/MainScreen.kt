@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
@@ -94,7 +95,9 @@ private fun MainContent(
             subtitle = "Выберите ближайший постомат",
             bottomPadding = 24.dp,
             endContent = {
-                Row {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     IconButton(
                         onClick = onNavigateToProfile
                     ) {
@@ -112,6 +115,8 @@ private fun MainContent(
                         color = AppTheme.colors.frame.onPrimary,
                         fontWeight = FontWeight.Bold,
                     )
+
+                    Spacer(modifier = Modifier.width(8.dp))
                 }
             }
         )
