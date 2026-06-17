@@ -7,6 +7,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import ru.glebik.mtsproject.ui.theme.AppTheme
 
 @Composable
 fun LoaderScreen() {
@@ -16,6 +17,8 @@ fun LoaderScreen() {
             .systemBarsPadding(),
         contentAlignment = Alignment.Center
     ) {
-        CircularProgressIndicator()
+        CircularProgressIndicator(
+            color = AppTheme.colors.frame.primary,
+        )
     }
 }
