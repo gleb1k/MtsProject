@@ -1,5 +1,6 @@
 package ru.glebik.mtsproject.feature.my_rents
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.update
@@ -42,12 +43,15 @@ class MyRentsViewModel @Inject constructor(
                 )
 
             } catch (e: Exception) {
-                mutableState.value = mutableState.value.copy(
-                    rents = ViewProperty.Error(
-                        errorMessage = UiText.DynamicString("Ошибка загрузки аренд"),
-                        error = e
+                Log.e("MyRentsVM", "Ошибка загрузки аренд", e)
+                mutableState.update {
+                    it.copy(
+                        rents = ViewProperty.Error(
+                            errorMessage = UiText.DynamicString("Ошибка загрузки аренд"),
+                            error = e
+                        )
                     )
-                )
+                }
             }
         }
     }

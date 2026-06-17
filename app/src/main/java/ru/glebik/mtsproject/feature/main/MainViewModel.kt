@@ -1,5 +1,6 @@
 package ru.glebik.mtsproject.feature.main
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.update
@@ -53,12 +54,15 @@ class MainViewModel @Inject constructor(
                 )
 
             } catch (e: Exception) {
-                mutableState.value = mutableState.value.copy(
-                    lockers = ViewProperty.Error(
-                        errorMessage = UiText.DynamicString("Ошибка загрузки"),
-                        error = e
+                Log.e("MainVM", "Ошибка загрузки локеров", e)
+                mutableState.update {
+                    it.copy(
+                        lockers = ViewProperty.Error(
+                            errorMessage = UiText.DynamicString("Ошибка загрузки"),
+                            error = e
+                        )
                     )
-                )
+                }
             }
         }
     }

@@ -1,7 +1,9 @@
 package ru.glebik.mtsproject.feature.locker_detail
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.update
 import ru.glebik.mtsproject.core.arch.BaseViewModel
 import ru.glebik.mtsproject.core.arch.util.ViewProperty
 import ru.glebik.mtsproject.core.util.UiText
@@ -24,23 +26,30 @@ class LockerDetailViewModel @Inject constructor(
 
     private fun loadLocker(lockerId: Long) {
         viewModelScope.launchSafe {
-            mutableState.value = mutableState.value.copy(
-                locker = ViewProperty.Loading,
-            )
+            mutableState.update {
+                it.copy(
+                    locker = ViewProperty.Loading,
+                )
+            }
 
             try {
                 val data = repository.getLockerDetail(lockerId)
 
-                mutableState.value = mutableState.value.copy(
-                    locker = ViewProperty.Content(data),
-                )
-            } catch (e: Exception) {
-                mutableState.value = mutableState.value.copy(
-                    locker = ViewProperty.Error(
-                        errorMessage = UiText.DynamicString("Ошибка загрузки"),
-                        error = e,
+                mutableState.update {
+                    it.copy(
+                        locker = ViewProperty.Content(data),
                     )
-                )
+                }
+            } catch (e: Exception) {
+                Log.e("LockerDetailVM", "Ошибка загрузки локера", e)
+                mutableState.update {
+                    it.copy(
+                        locker = ViewProperty.Error(
+                            errorMessage = UiText.DynamicString("Ошибка загрузки"),
+                            error = e,
+                        )
+                    )
+                }
             }
         }
     }
