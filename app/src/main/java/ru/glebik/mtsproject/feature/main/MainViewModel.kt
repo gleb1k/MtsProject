@@ -8,8 +8,8 @@ import ru.glebik.mtsproject.core.arch.util.ViewProperty
 import ru.glebik.mtsproject.core.session.UserSession
 import ru.glebik.mtsproject.core.util.UiText
 import ru.glebik.mtsproject.feature.locker.domain.GetLockersUseCase
-import ru.glebik.mtsproject.feature.locker.data.model.LockerResponse
 import ru.glebik.mtsproject.feature.locker.domain.model.Locker
+import ru.glebik.mtsproject.feature.locker_cell.domain.model.LockerCell.*
 import javax.inject.Inject
 
 
@@ -64,12 +64,14 @@ class MainViewModel @Inject constructor(
     }
 
     private fun Locker.toUiModel(): LockerUiModel {
+        val availableCells = cells.count { it.status == Status.AVAILABLE }
+
         return LockerUiModel(
             id = id.hashCode().toLong(),
             name = title,
             address = address,
-            currentAvailableCells = 0,
-            maxAvailableCells = 0,
+            currentAvailableCells = availableCells,
+            maxAvailableCells = cells.size,
         )
     }
 }

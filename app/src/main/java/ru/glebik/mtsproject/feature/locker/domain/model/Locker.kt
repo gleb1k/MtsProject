@@ -10,7 +10,7 @@ data class Locker(
     val longitude: String,
     val status: Status,
     val createdAt: String,
-    val cells: List<LockerCell> = emptyList(),
+    val cells: List<LockerCell>,
 ) {
     enum class Status {
         ACTIVE,

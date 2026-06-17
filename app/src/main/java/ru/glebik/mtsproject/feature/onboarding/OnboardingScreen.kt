@@ -112,7 +112,7 @@ private fun OnboardingContent(
             Spacer(modifier = Modifier.weight(1f))
 
             Text(
-                text = "МегаФон © 2026",
+                text = "SmartLocker © 2026",
                 style = AppTheme.typography.caption,
                 color = AppTheme.colors.text.secondary,
                 modifier = Modifier.padding(bottom = 24.dp),

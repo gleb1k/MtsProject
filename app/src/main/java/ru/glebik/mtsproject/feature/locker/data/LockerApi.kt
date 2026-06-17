@@ -6,7 +6,7 @@ import ru.glebik.mtsproject.feature.locker.data.model.LockerResponse
 
 interface LockerApi {
 
-    @GET("/api/v1/lockers/")
+    @GET("/api/v1/locker-stations/")
     suspend fun getLockers(
         @Query("skip") skip: Int = 0,
         @Query("limit") limit: Int = 100,
