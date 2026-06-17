@@ -20,6 +20,7 @@ import ru.glebik.mtsproject.feature.auth.register.RegisterScreen
 import ru.glebik.mtsproject.feature.cell_activation.CellActivationScreen
 import ru.glebik.mtsproject.feature.locker_detail.LockerDetailScreen
 import ru.glebik.mtsproject.feature.main.MainScreen
+import ru.glebik.mtsproject.feature.my_rents.MyRentsScreen
 import ru.glebik.mtsproject.feature.onboarding.OnboardingScreen
 import ru.glebik.mtsproject.feature.profile.ProfileScreen
 
@@ -106,6 +107,13 @@ fun AppNavigation(
                     onNavigateToLockerDetail = { lockerId ->
                         backStack.add(LockerDetailNavKey(lockerId))
                     },
+                    onNavigateToMyRents = { backStack.add(MyRentsNavKey) },
+                )
+            }
+
+            entry<MyRentsNavKey> {
+                MyRentsScreen(
+                    onNavigateBack = { backStack.removeLastOrNull() },
                 )
             }
 

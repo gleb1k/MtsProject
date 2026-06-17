@@ -28,3 +28,6 @@ data class CellActivationNavKey(
     val lockerId: Long,
     val cellNumber: Int,
 ) : NavKey
+
+@Serializable
+data object MyRentsNavKey : NavKey

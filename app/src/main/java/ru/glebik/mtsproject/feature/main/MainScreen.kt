@@ -47,6 +47,7 @@ import ru.glebik.mtsproject.ui.util.asString
 fun MainScreen(
     onNavigateToProfile: () -> Unit,
     onNavigateToLockerDetail: (Long) -> Unit,
+    onNavigateToMyRents: () -> Unit,
     viewModel: MainViewModel = hiltViewModel(),
 ) {
 
@@ -64,6 +65,7 @@ fun MainScreen(
                 lockers = lockersState.content,
                 onNavigateToProfile = onNavigateToProfile,
                 onNavigateToLockerDetail = onNavigateToLockerDetail,
+                onNavigateToMyRents = onNavigateToMyRents,
             )
         }
 
@@ -79,6 +81,7 @@ private fun MainContent(
     lockers: List<LockerUiModel>,
     onNavigateToProfile: () -> Unit,
     onNavigateToLockerDetail: (Long) -> Unit,
+    onNavigateToMyRents: () -> Unit,
 ) {
 
     Column(
@@ -126,7 +129,7 @@ private fun MainContent(
         ) {
 
             item {
-                MyRents()
+                MyRents(onClick = onNavigateToMyRents)
             }
 
             item {
@@ -144,12 +147,14 @@ private fun MainContent(
 }
 
 @Composable
-private fun MyRents() {
+private fun MyRents(onClick: () -> Unit) {
     ContainerRow(
         contentPadding = PaddingValues(16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
