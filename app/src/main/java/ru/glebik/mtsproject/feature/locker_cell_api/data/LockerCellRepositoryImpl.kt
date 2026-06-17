@@ -1,8 +1,8 @@
-package ru.glebik.mtsproject.feature.locker_cell.data
+package ru.glebik.mtsproject.feature.locker_cell_api.data
 
-import ru.glebik.mtsproject.feature.locker_cell.data.model.toDomain
-import ru.glebik.mtsproject.feature.locker_cell.domain.LockerCellRepository
-import ru.glebik.mtsproject.feature.locker_cell.domain.model.LockerCell
+import ru.glebik.mtsproject.feature.locker_cell_api.data.model.toDomain
+import ru.glebik.mtsproject.feature.locker_cell_api.domain.LockerCellRepository
+import ru.glebik.mtsproject.feature.locker_cell_api.domain.model.LockerCell
 import javax.inject.Inject
 
 class LockerCellRepositoryImpl @Inject constructor(

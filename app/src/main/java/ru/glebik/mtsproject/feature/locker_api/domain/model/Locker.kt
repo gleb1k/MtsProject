@@ -1,6 +1,6 @@
-package ru.glebik.mtsproject.feature.locker.domain.model
+package ru.glebik.mtsproject.feature.locker_api.domain.model
 
-import ru.glebik.mtsproject.feature.locker_cell.domain.model.LockerCell
+import ru.glebik.mtsproject.feature.locker_cell_api.domain.model.LockerCell
 
 data class Locker(
     val id: String,

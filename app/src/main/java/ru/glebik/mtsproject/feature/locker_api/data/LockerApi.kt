@@ -1,8 +1,8 @@
-package ru.glebik.mtsproject.feature.locker.data
+package ru.glebik.mtsproject.feature.locker_api.data
 
 import retrofit2.http.GET
 import retrofit2.http.Query
-import ru.glebik.mtsproject.feature.locker.data.model.LockerResponse
+import ru.glebik.mtsproject.feature.locker_api.data.model.LockerResponse
 
 interface LockerApi {
 

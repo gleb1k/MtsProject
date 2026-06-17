@@ -1,8 +1,8 @@
-package ru.glebik.mtsproject.feature.locker_cell.data
+package ru.glebik.mtsproject.feature.locker_cell_api.data
 
 import retrofit2.http.GET
 import retrofit2.http.Query
-import ru.glebik.mtsproject.feature.locker_cell.data.model.LockerCellResponse
+import ru.glebik.mtsproject.feature.locker_cell_api.data.model.LockerCellResponse
 
 interface LockerCellApi {
 

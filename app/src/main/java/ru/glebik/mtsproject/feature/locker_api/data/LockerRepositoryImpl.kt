@@ -1,7 +1,7 @@
-package ru.glebik.mtsproject.feature.locker.data
+package ru.glebik.mtsproject.feature.locker_api.data
 
-import ru.glebik.mtsproject.feature.locker.data.model.LockerResponse
-import ru.glebik.mtsproject.feature.locker.domain.LockerRepository
+import ru.glebik.mtsproject.feature.locker_api.data.model.LockerResponse
+import ru.glebik.mtsproject.feature.locker_api.domain.LockerRepository
 import javax.inject.Inject
 
 class LockerRepositoryImpl @Inject constructor(

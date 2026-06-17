@@ -1,4 +1,4 @@
-package ru.glebik.mtsproject.feature.locker_cell.di
+package ru.glebik.mtsproject.feature.locker_cell_api.di
 
 import dagger.Binds
 import dagger.Module
@@ -8,11 +8,11 @@ import dagger.hilt.components.SingletonComponent
 import jakarta.inject.Singleton
 import retrofit2.Retrofit
 import retrofit2.create
-import ru.glebik.mtsproject.feature.locker_cell.data.LockerCellApi
-import ru.glebik.mtsproject.feature.locker_cell.data.LockerCellRepositoryImpl
-import ru.glebik.mtsproject.feature.locker_cell.domain.GetLockerCellsUseCase
-import ru.glebik.mtsproject.feature.locker_cell.domain.GetLockerCellsUseCaseImpl
-import ru.glebik.mtsproject.feature.locker_cell.domain.LockerCellRepository
+import ru.glebik.mtsproject.feature.locker_cell_api.data.LockerCellApi
+import ru.glebik.mtsproject.feature.locker_cell_api.data.LockerCellRepositoryImpl
+import ru.glebik.mtsproject.feature.locker_cell_api.domain.GetLockerCellsUseCase
+import ru.glebik.mtsproject.feature.locker_cell_api.domain.GetLockerCellsUseCaseImpl
+import ru.glebik.mtsproject.feature.locker_cell_api.domain.LockerCellRepository
 
 @Module
 @InstallIn(SingletonComponent::class)

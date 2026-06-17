@@ -1,10 +1,9 @@
-package ru.glebik.mtsproject.feature.locker.domain
+package ru.glebik.mtsproject.feature.locker_api.domain
 
 import jakarta.inject.Inject
-import ru.glebik.mtsproject.feature.locker.data.model.LockerResponse
-import ru.glebik.mtsproject.feature.locker.data.model.toDomain
-import ru.glebik.mtsproject.feature.locker.domain.model.Locker
-import ru.glebik.mtsproject.feature.locker_cell.domain.LockerCellRepository
+import ru.glebik.mtsproject.feature.locker_api.data.model.toDomain
+import ru.glebik.mtsproject.feature.locker_api.domain.model.Locker
+import ru.glebik.mtsproject.feature.locker_cell_api.domain.LockerCellRepository
 
 
 interface GetLockersUseCase {

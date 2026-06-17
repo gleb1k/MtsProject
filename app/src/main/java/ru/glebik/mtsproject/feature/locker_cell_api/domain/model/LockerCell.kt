@@ -1,4 +1,4 @@
-package ru.glebik.mtsproject.feature.locker_cell.domain.model
+package ru.glebik.mtsproject.feature.locker_cell_api.domain.model
 
 data class LockerCell(
     val id: String,

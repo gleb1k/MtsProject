@@ -7,9 +7,9 @@ import ru.glebik.mtsproject.core.arch.BaseViewModel
 import ru.glebik.mtsproject.core.arch.util.ViewProperty
 import ru.glebik.mtsproject.core.session.UserSession
 import ru.glebik.mtsproject.core.util.UiText
-import ru.glebik.mtsproject.feature.locker.domain.GetLockersUseCase
-import ru.glebik.mtsproject.feature.locker.domain.model.Locker
-import ru.glebik.mtsproject.feature.locker_cell.domain.model.LockerCell.*
+import ru.glebik.mtsproject.feature.locker_api.domain.GetLockersUseCase
+import ru.glebik.mtsproject.feature.locker_api.domain.model.Locker
+import ru.glebik.mtsproject.feature.locker_cell_api.domain.model.LockerCell.*
 import javax.inject.Inject
 
 

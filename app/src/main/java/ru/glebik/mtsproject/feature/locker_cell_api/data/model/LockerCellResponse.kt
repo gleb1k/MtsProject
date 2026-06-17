@@ -1,4 +1,4 @@
-package ru.glebik.mtsproject.feature.locker_cell.data.model
+package ru.glebik.mtsproject.feature.locker_cell_api.data.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

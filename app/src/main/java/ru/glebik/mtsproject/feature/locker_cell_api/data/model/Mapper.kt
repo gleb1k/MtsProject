@@ -1,6 +1,6 @@
-package ru.glebik.mtsproject.feature.locker_cell.data.model
+package ru.glebik.mtsproject.feature.locker_cell_api.data.model
 
-import ru.glebik.mtsproject.feature.locker_cell.domain.model.LockerCell
+import ru.glebik.mtsproject.feature.locker_cell_api.domain.model.LockerCell
 
 
 fun LockerCellResponse.toDomain(): LockerCell {

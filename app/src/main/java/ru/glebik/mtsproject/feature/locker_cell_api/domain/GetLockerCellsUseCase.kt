@@ -1,7 +1,7 @@
-package ru.glebik.mtsproject.feature.locker_cell.domain
+package ru.glebik.mtsproject.feature.locker_cell_api.domain
 
 import jakarta.inject.Inject
-import ru.glebik.mtsproject.feature.locker_cell.domain.model.LockerCell
+import ru.glebik.mtsproject.feature.locker_cell_api.domain.model.LockerCell
 
 
 interface GetLockerCellsUseCase {
