@@ -64,6 +64,7 @@ fun MainScreen(
             MainContent(
                 nickName = state.nickName,
                 lockers = lockersState.content,
+                myRentsCount = state.myRentsCount,
                 onNavigateToProfile = onNavigateToProfile,
                 onNavigateToLockerDetail = onNavigateToLockerDetail,
                 onNavigateToMyRents = onNavigateToMyRents,
@@ -80,6 +81,7 @@ fun MainScreen(
 private fun MainContent(
     nickName: String,
     lockers: List<LockerUiModel>,
+    myRentsCount: Int,
     onNavigateToProfile: () -> Unit,
     onNavigateToLockerDetail: (Long) -> Unit,
     onNavigateToMyRents: () -> Unit,
@@ -114,6 +116,9 @@ private fun MainContent(
                         style = AppTheme.typography.body,
                         color = AppTheme.colors.frame.onPrimary,
                         fontWeight = FontWeight.Bold,
+                        modifier = Modifier.clickable {
+                            onNavigateToProfile()
+                        }
                     )
 
                     Spacer(modifier = Modifier.width(8.dp))
@@ -134,7 +139,10 @@ private fun MainContent(
         ) {
 
             item {
-                MyRents(onClick = onNavigateToMyRents)
+                MyRents(
+                    myRentsCount = myRentsCount,
+                    onClick = onNavigateToMyRents,
+                )
             }
 
             item {
@@ -152,7 +160,10 @@ private fun MainContent(
 }
 
 @Composable
-private fun MyRents(onClick: () -> Unit) {
+private fun MyRents(
+    myRentsCount: Int,
+    onClick: () -> Unit,
+) {
     ContainerRow(
         contentPadding = PaddingValues(16.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -165,11 +176,20 @@ private fun MyRents(onClick: () -> Unit) {
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxHeight()
         ) {
-            IconContainer(
-                iconRes = R.drawable.common_box_24,
-                iconColor = AppTheme.colors.icon.onBlue,
-                containerColor = AppTheme.colors.icon.blue
-            )
+
+            if (myRentsCount == 0) {
+                IconContainer(
+                    iconRes = R.drawable.common_box_24,
+                    iconColor = AppTheme.colors.icon.onBlue,
+                    containerColor = AppTheme.colors.icon.blue
+                )
+            } else {
+                IconContainer(
+                    iconRes = R.drawable.common_box_24,
+                    iconColor = AppTheme.colors.icon.onGreen,
+                    containerColor = AppTheme.colors.icon.green
+                )
+            }
 
             Column(
                 Modifier.padding(horizontal = 12.dp)
@@ -181,10 +201,17 @@ private fun MyRents(onClick: () -> Unit) {
                     fontWeight = FontWeight.Bold,
                 )
 
-                Text(
-                    text = "Нет активных аренд",
-                    style = AppTheme.typography.caption
-                )
+                if (myRentsCount == 0) {
+                    Text(
+                        text = "Нет активных аренд",
+                        style = AppTheme.typography.caption
+                    )
+                } else {
+                    Text(
+                        text = "Активные: $myRentsCount",
+                        style = AppTheme.typography.caption
+                    )
+                }
             }
         }
 

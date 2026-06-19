@@ -7,11 +7,12 @@ import kotlinx.coroutines.flow.update
 import ru.glebik.mtsproject.core.arch.BaseViewModel
 import ru.glebik.mtsproject.core.arch.util.ViewProperty
 import ru.glebik.mtsproject.core.util.UiText
+import ru.glebik.mtsproject.feature.my_rents.domain.GetMyRentsUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class MyRentsViewModel @Inject constructor(
-    // TODO: добавить репозиторий для загрузки аренд
+    private val getMyRentsUseCase: GetMyRentsUseCase,
 ) : BaseViewModel<MyRentsUiState, MyRentsEffect, MyRentsIntent>() {
 
     override fun initialState(): MyRentsUiState {
@@ -35,8 +36,8 @@ class MyRentsViewModel @Inject constructor(
             }
 
             try {
-                // TODO: загрузить аренды из репозитория
-                val data = emptyList<RentUiModel>()
+                val result = getMyRentsUseCase()
+                val data = result.getOrThrow().map { it.toUiModel() }
 
                 mutableState.value = mutableState.value.copy(
                     rents = ViewProperty.Content(data)

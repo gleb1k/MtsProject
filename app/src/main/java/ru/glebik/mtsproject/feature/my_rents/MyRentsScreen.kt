@@ -30,7 +30,6 @@ import ru.glebik.mtsproject.R
 import ru.glebik.mtsproject.core.arch.util.ViewProperty
 import ru.glebik.mtsproject.ui.common.AppHeader
 import ru.glebik.mtsproject.ui.common.ContainerColumn
-import ru.glebik.mtsproject.ui.common.IconContainer
 import ru.glebik.mtsproject.ui.screen.ErrorScreen
 import ru.glebik.mtsproject.ui.screen.LoaderScreen
 import ru.glebik.mtsproject.ui.theme.AppTheme
@@ -169,15 +168,17 @@ private fun RentItem(rent: RentUiModel) {
 
             Text(
                 text = when (rent.status) {
-                    RentStatus.ACTIVE -> "Активна"
-                    RentStatus.COMPLETED -> "Завершена"
-                    RentStatus.CANCELLED -> "Отменена"
+                    RentUiModel.RentStatus.ACTIVE -> "Активна"
+                    RentUiModel.RentStatus.WAITING_CLOSE -> "Ждет закрытия"
+                    RentUiModel.RentStatus.PAYMENT -> "Ждет оплаты"
+                    RentUiModel.RentStatus.COMPLETED -> "Завершена"
+                    RentUiModel.RentStatus.CANCELLED -> "Отменена"
+                    RentUiModel.RentStatus.OVERDUE -> "Просрочена"
                 },
                 style = AppTheme.typography.caption,
                 color = when (rent.status) {
-                    RentStatus.ACTIVE -> AppTheme.colors.frame.onActive
-                    RentStatus.COMPLETED -> AppTheme.colors.text.secondary
-                    RentStatus.CANCELLED -> AppTheme.colors.text.secondary
+                    RentUiModel.RentStatus.ACTIVE -> AppTheme.colors.frame.onActive
+                    else -> AppTheme.colors.text.secondary
                 },
             )
         }

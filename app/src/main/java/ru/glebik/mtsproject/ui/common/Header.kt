@@ -62,47 +62,46 @@ fun AppHeader(
                     }
                 }
 
-                if (title.isNotBlank() || subtitle != null) {
-                    Column(
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        horizontalAlignment = horizontalAlignment,
-                    ) {
-                        if (title.isNotBlank()) {
-                            Text(
-                                text = title,
-                                style = AppTheme.typography.header.copy(fontWeight = FontWeight.Bold),
-                                color = AppTheme.colors.frame.onPrimary,
-                            )
-                        }
+                Column(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    horizontalAlignment = horizontalAlignment,
+                    verticalArrangement = Arrangement.Center,
+                ) {
+                    if (title.isNotBlank()) {
+                        Text(
+                            text = title,
+                            style = AppTheme.typography.header.copy(fontWeight = FontWeight.Bold),
+                            color = AppTheme.colors.frame.onPrimary,
+                        )
+                    }
 
-                        if (subtitle != null) {
-                            Spacer(modifier = Modifier.height(if (subtitleIconRes != null) 8.dp else 4.dp))
+                    if (subtitle != null) {
+                        Spacer(modifier = Modifier.height(if (subtitleIconRes != null) 8.dp else 4.dp))
 
-                            if (subtitleIconRes != null) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                ) {
-                                    Icon(
-                                        painter = painterResource(subtitleIconRes),
-                                        contentDescription = null,
-                                        tint = AppTheme.colors.frame.onPrimary,
-                                        modifier = Modifier.size(16.dp),
-                                    )
+                        if (subtitleIconRes != null) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Icon(
+                                    painter = painterResource(subtitleIconRes),
+                                    contentDescription = null,
+                                    tint = AppTheme.colors.frame.onPrimary,
+                                    modifier = Modifier.size(16.dp),
+                                )
 
-                                    Text(
-                                        text = subtitle,
-                                        style = AppTheme.typography.body,
-                                        color = AppTheme.colors.frame.onPrimary,
-                                        modifier = Modifier.padding(start = 6.dp),
-                                    )
-                                }
-                            } else {
                                 Text(
                                     text = subtitle,
                                     style = AppTheme.typography.body,
                                     color = AppTheme.colors.frame.onPrimary,
+                                    modifier = Modifier.padding(start = 6.dp),
                                 )
                             }
+                        } else {
+                            Text(
+                                text = subtitle,
+                                style = AppTheme.typography.body,
+                                color = AppTheme.colors.frame.onPrimary,
+                            )
                         }
                     }
                 }

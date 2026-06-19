@@ -10,7 +10,7 @@ import ru.glebik.mtsproject.core.session.UserSession
 import ru.glebik.mtsproject.core.util.UiText
 import ru.glebik.mtsproject.feature.locker_api.domain.GetLockersUseCase
 import ru.glebik.mtsproject.feature.locker_api.domain.model.Locker
-import ru.glebik.mtsproject.feature.locker_cell_api.domain.model.LockerCell.*
+import ru.glebik.mtsproject.feature.my_rents.domain.GetMyRentsCountUseCase
 import javax.inject.Inject
 
 
@@ -18,6 +18,7 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val getLockersUseCase: GetLockersUseCase,
     private val userSession: UserSession,
+    private val getMyRentsCountUseCase: GetMyRentsCountUseCase,
 ) : BaseViewModel<MainUiState, MainEffect, MainIntent>() {
 
     override fun initialState(): MainUiState {
@@ -34,7 +35,10 @@ class MainViewModel @Inject constructor(
 
     override fun handleIntent(intent: MainIntent) {
         when (intent) {
-            MainIntent.Load -> loadLockers()
+            MainIntent.Load -> {
+                loadLockers()
+                loadMyRentsCount()
+            }
         }
     }
 
@@ -68,14 +72,29 @@ class MainViewModel @Inject constructor(
     }
 
     private fun Locker.toUiModel(): LockerUiModel {
-        val availableCells = cells.count { it.status == Status.AVAILABLE }
 
         return LockerUiModel(
             id = id.hashCode().toLong(),
             name = title,
             address = address,
-            currentAvailableCells = availableCells,
-            maxAvailableCells = cells.size,
+            currentAvailableCells = freeCells,
+            maxAvailableCells = totalCells,
         )
+    }
+
+    private fun loadMyRentsCount() {
+        viewModelScope.launchSafe {
+            try {
+                val count = getMyRentsCountUseCase()
+                mutableState.update {
+                    it.copy(myRentsCount = count)
+                }
+            } catch (e: Exception) {
+                Log.e("MainVM", "Ошибка загрузки количества аренд", e)
+                mutableState.update {
+                    it.copy(myRentsCount = -1)
+                }
+            }
+        }
     }
 }

@@ -13,7 +13,6 @@ interface GetLockersUseCase {
 
 class GetLockersUseCaseImpl @Inject constructor(
     private val lockerRepository: LockerRepository,
-    private val lockerCellRepository: LockerCellRepository,
 ) : GetLockersUseCase {
 
     override suspend fun invoke(): Result<List<Locker>> {
@@ -21,8 +20,7 @@ class GetLockersUseCaseImpl @Inject constructor(
             val lockerResponses = lockerRepository.getLockers().getOrThrow()
 
             lockerResponses.map { lockerResponse ->
-                val cells = lockerCellRepository.getLockerCells(lockerResponse.id).getOrDefault(emptyList())
-                lockerResponse.toDomain(cells)
+                lockerResponse.toDomain()
             }
         }
     }

@@ -25,4 +25,13 @@ data class LockerResponse(
 
     @SerialName("created_at")
     val createdAt: String,
+
+    @SerialName("total_cells")
+    val totalCells: Int,
+
+    @SerialName("occupied_cells")
+    val occupiedCells: Int,
+
+    @SerialName("free_cells")
+    val freeCells: Int,
 )
