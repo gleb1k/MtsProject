@@ -45,6 +45,7 @@ import ru.glebik.mtsproject.ui.util.asString
 fun CellActivationScreen(
     cellId: String,
     onNavigateBack: () -> Unit,
+    onNavigateToMyRents: () -> Unit,
     viewModel: CellActivationViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle().value
@@ -57,6 +58,7 @@ fun CellActivationScreen(
         viewModel.effect.collectLatest { effect ->
             when (effect) {
                 CellActivationEffect.NavigateBack -> onNavigateBack()
+                CellActivationEffect.NavigateToMyRents -> onNavigateToMyRents()
             }
         }
     }
@@ -69,6 +71,8 @@ fun CellActivationScreen(
             cardNumber = state.cardNumber,
             expiryDate = state.expiryDate,
             cvv = state.cvv,
+            isSubmitting = state.isSubmitting,
+            submitError = state.submitError,
             onBackClick = { viewModel.handleIntent(CellActivationIntent.Back) },
             onCardNumberChange = { viewModel.handleIntent(CellActivationIntent.CardNumberChanged(it)) },
             onExpiryDateChange = { viewModel.handleIntent(CellActivationIntent.ExpiryDateChanged(it)) },
@@ -86,6 +90,8 @@ private fun CellActivationContent(
     cardNumber: String,
     expiryDate: String,
     cvv: String,
+    isSubmitting: Boolean,
+    submitError: String?,
     onBackClick: () -> Unit,
     onCardNumberChange: (String) -> Unit,
     onExpiryDateChange: (String) -> Unit,
@@ -134,10 +140,19 @@ private fun CellActivationContent(
                 message = "После нажатия кнопки дверь ячейки откроется. Аренда начнётся после физического закрытия двери.",
             )
 
+            if (submitError != null) {
+                Text(
+                    text = submitError,
+                    style = AppTheme.typography.body,
+                    color = AppTheme.colors.frame.primary,
+                )
+            }
+
             PrimaryIconButton(
-                text = "Открыть ячейку",
+                text = if (isSubmitting) "Сохранение..." else "Открыть ячейку",
                 iconRes = R.drawable.unlock_24,
                 onClick = onOpenCellClick,
+                loading = isSubmitting,
             )
 
             Spacer(modifier = Modifier.height(16.dp))

@@ -9,12 +9,14 @@ import ru.glebik.mtsproject.core.arch.util.ViewProperty
 import ru.glebik.mtsproject.core.util.UiText
 import ru.glebik.mtsproject.feature.locker_api.domain.GetLockerByIdUseCase
 import ru.glebik.mtsproject.feature.locker_cell_api.domain.GetLockerCellByIdUseCase
+import ru.glebik.mtsproject.feature.payment.domain.usecase.CreatePaymentMethodUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class CellActivationViewModel @Inject constructor(
     private val getLockerCellByIdUseCase: GetLockerCellByIdUseCase,
     private val getLockerByIdUseCase: GetLockerByIdUseCase,
+    private val createPaymentMethodUseCase: CreatePaymentMethodUseCase,
 ) : BaseViewModel<CellActivationUiState, CellActivationEffect, CellActivationIntent>() {
 
     override fun initialState(): CellActivationUiState = CellActivationUiState()
@@ -24,19 +26,34 @@ class CellActivationViewModel @Inject constructor(
             is CellActivationIntent.Load -> loadCell(intent.cellId)
 
             is CellActivationIntent.CardNumberChanged -> {
-                mutableState.update { it.copy(cardNumber = intent.value) }
+                mutableState.update {
+                    it.copy(
+                        cardNumber = formatCardNumber(intent.value),
+                        submitError = null,
+                    )
+                }
             }
 
             is CellActivationIntent.ExpiryDateChanged -> {
-                mutableState.update { it.copy(expiryDate = intent.value) }
+                mutableState.update {
+                    it.copy(
+                        expiryDate = formatExpiryDate(intent.value),
+                        submitError = null,
+                    )
+                }
             }
 
             is CellActivationIntent.CvvChanged -> {
-                mutableState.update { it.copy(cvv = intent.value) }
+                mutableState.update {
+                    it.copy(
+                        cvv = formatCvv(intent.value),
+                        submitError = null,
+                    )
+                }
             }
 
             CellActivationIntent.Back -> navigateBack()
-            CellActivationIntent.OpenCell -> navigateBack()
+            CellActivationIntent.OpenCell -> createPaymentMethodAndOpenCell()
         }
     }
 
@@ -60,6 +77,43 @@ class CellActivationViewModel @Inject constructor(
                             errorMessage = UiText.DynamicString("Ошибка загрузки"),
                             error = e,
                         )
+                    )
+                }
+            }
+        }
+    }
+
+    private fun createPaymentMethodAndOpenCell() {
+        val state = mutableState.value
+        if (state.isSubmitting) return
+
+        val maskedPan = formatMaskedPan(state.cardNumber)
+        if (maskedPan == null) {
+            mutableState.update {
+                it.copy(submitError = "Введите номер карты")
+            }
+            return
+        }
+
+        viewModelScope.launchSafe {
+            mutableState.update {
+                it.copy(isSubmitting = true, submitError = null)
+            }
+
+            createPaymentMethodUseCase(
+                provider = PAYMENT_PROVIDER,
+                maskedPan = maskedPan,
+                token = "",
+                isVerified = true,
+            ).onSuccess {
+                mutableState.update { it.copy(isSubmitting = false) }
+                mutableEffect.emit(CellActivationEffect.NavigateToMyRents)
+            }.onFailure { error ->
+                Log.e("CellActivationVM", "Ошибка сохранения карты", error)
+                mutableState.update {
+                    it.copy(
+                        isSubmitting = false,
+                        submitError = error.message ?: "Ошибка сохранения карты",
                     )
                 }
             }

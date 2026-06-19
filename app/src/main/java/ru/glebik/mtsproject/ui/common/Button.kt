@@ -94,13 +94,23 @@ fun PrimaryIconButton(
     text: String,
     iconRes: Int,
     onClick: () -> Unit,
+    loading: Boolean = false,
+    enabled: Boolean = true,
 ) {
+    val isClickable = enabled && !loading
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .clip(AppTheme.shapes.default)
-            .background(AppTheme.colors.frame.primary)
-            .clickable(onClick = onClick)
+            .background(
+                if (isClickable) AppTheme.colors.frame.primary
+                else AppTheme.colors.frame.primary.copy(alpha = 0.5f)
+            )
+            .clickable(
+                enabled = isClickable,
+                onClick = onClick,
+            )
             .padding(vertical = 16.dp),
         contentAlignment = Alignment.Center,
     ) {
@@ -108,12 +118,20 @@ fun PrimaryIconButton(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Icon(
-                painter = painterResource(iconRes),
-                contentDescription = null,
-                tint = AppTheme.colors.frame.onPrimary,
-                modifier = Modifier.size(20.dp),
-            )
+            if (loading) {
+                CircularProgressIndicator(
+                    color = AppTheme.colors.frame.onPrimary,
+                    strokeWidth = 2.dp,
+                    modifier = Modifier.size(20.dp),
+                )
+            } else {
+                Icon(
+                    painter = painterResource(iconRes),
+                    contentDescription = null,
+                    tint = AppTheme.colors.frame.onPrimary,
+                    modifier = Modifier.size(20.dp),
+                )
+            }
 
             Text(
                 text = text,

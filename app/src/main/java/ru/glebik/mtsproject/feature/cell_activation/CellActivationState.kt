@@ -10,7 +10,16 @@ data class CellActivationUiState(
     val cardNumber: String = "",
     val expiryDate: String = "",
     val cvv: String = "",
-) : UiState
+    val isSubmitting: Boolean = false,
+    val submitError: String? = null,
+) : UiState {
+
+    companion object {
+        const val CARD_NUMBER_MAX_LENGTH = CellActivationInputLimits.CARD_NUMBER_MAX_LENGTH
+        const val EXPIRY_DATE_MAX_LENGTH = CellActivationInputLimits.EXPIRY_DATE_MAX_LENGTH
+        const val CVV_MAX_LENGTH = CellActivationInputLimits.CVV_MAX_LENGTH
+    }
+}
 
 sealed interface CellActivationIntent : UiIntent {
     data class Load(val cellId: String) : CellActivationIntent
@@ -23,4 +32,5 @@ sealed interface CellActivationIntent : UiIntent {
 
 sealed interface CellActivationEffect : UiEffect {
     data object NavigateBack : CellActivationEffect
+    data object NavigateToMyRents : CellActivationEffect
 }

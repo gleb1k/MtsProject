@@ -131,6 +131,11 @@ fun AppNavigation(
                 CellActivationScreen(
                     cellId = key.cellId,
                     onNavigateBack = { backStack.removeLastOrNull() },
+                    onNavigateToMyRents = {
+                        backStack.clear()
+                        backStack.add(MainNavKey)
+                        backStack.add(MyRentsNavKey)
+                    },
                 )
             }
 
