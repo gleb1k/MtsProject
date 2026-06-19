@@ -10,6 +10,8 @@ import retrofit2.Retrofit
 import retrofit2.create
 import ru.glebik.mtsproject.feature.locker_cell_api.data.LockerCellApi
 import ru.glebik.mtsproject.feature.locker_cell_api.data.LockerCellRepositoryImpl
+import ru.glebik.mtsproject.feature.locker_cell_api.domain.GetLockerCellByIdUseCase
+import ru.glebik.mtsproject.feature.locker_cell_api.domain.GetLockerCellByIdUseCaseImpl
 import ru.glebik.mtsproject.feature.locker_cell_api.domain.GetLockerCellsUseCase
 import ru.glebik.mtsproject.feature.locker_cell_api.domain.GetLockerCellsUseCaseImpl
 import ru.glebik.mtsproject.feature.locker_cell_api.domain.LockerCellRepository
@@ -29,6 +31,12 @@ abstract class LockerCellModule {
     abstract fun bindGetLockerCellsUseCase(
         impl: GetLockerCellsUseCaseImpl,
     ): GetLockerCellsUseCase
+
+    @Binds
+    @Singleton
+    abstract fun bindGetLockerCellByIdUseCase(
+        impl: GetLockerCellByIdUseCaseImpl,
+    ): GetLockerCellByIdUseCase
 
     companion object {
 

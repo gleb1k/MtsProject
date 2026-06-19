@@ -121,16 +121,15 @@ fun AppNavigation(
                 LockerDetailScreen(
                     lockerId = key.lockerId,
                     onNavigateBack = { backStack.removeLastOrNull() },
-                    onNavigateToCellActivation = { cell ->
-                        backStack.add(CellActivationNavKey(key.lockerId, cell))
+                    onNavigateToCellActivation = { cellId ->
+                        backStack.add(CellActivationNavKey(cellId))
                     },
                 )
             }
 
             entry<CellActivationNavKey> { key ->
                 CellActivationScreen(
-                    lockerId = key.lockerId,
-                    cellNumber = key.cellNumber,
+                    cellId = key.cellId,
                     onNavigateBack = { backStack.removeLastOrNull() },
                 )
             }

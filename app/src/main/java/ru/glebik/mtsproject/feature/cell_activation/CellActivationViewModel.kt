@@ -7,19 +7,21 @@ import kotlinx.coroutines.flow.update
 import ru.glebik.mtsproject.core.arch.BaseViewModel
 import ru.glebik.mtsproject.core.arch.util.ViewProperty
 import ru.glebik.mtsproject.core.util.UiText
-import ru.glebik.mtsproject.feature.cell_activation.data.CellActivationRepository
+import ru.glebik.mtsproject.feature.locker_api.domain.GetLockerByIdUseCase
+import ru.glebik.mtsproject.feature.locker_cell_api.domain.GetLockerCellByIdUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class CellActivationViewModel @Inject constructor(
-    private val repository: CellActivationRepository,
+    private val getLockerCellByIdUseCase: GetLockerCellByIdUseCase,
+    private val getLockerByIdUseCase: GetLockerByIdUseCase,
 ) : BaseViewModel<CellActivationUiState, CellActivationEffect, CellActivationIntent>() {
 
     override fun initialState(): CellActivationUiState = CellActivationUiState()
 
     override fun handleIntent(intent: CellActivationIntent) {
         when (intent) {
-            is CellActivationIntent.Load -> loadCell(intent.lockerId, intent.cellNumber)
+            is CellActivationIntent.Load -> loadCell(intent.cellId)
 
             is CellActivationIntent.CardNumberChanged -> {
                 mutableState.update { it.copy(cardNumber = intent.value) }
@@ -38,17 +40,17 @@ class CellActivationViewModel @Inject constructor(
         }
     }
 
-    private fun loadCell(lockerId: String, cellNumber: Int) {
+    private fun loadCell(cellId: String) {
         viewModelScope.launchSafe {
             mutableState.update { it.copy(cell = ViewProperty.Loading) }
 
             try {
-                val data = repository.getCellActivation(lockerId, cellNumber)
+                val cell = getLockerCellByIdUseCase(cellId).getOrThrow()
+                val locker = getLockerByIdUseCase(cell.stationId).getOrThrow()
+                val data = cell.toActivationUiModel(locker)
 
                 mutableState.update {
-                    it.copy(
-                        cell = ViewProperty.Content(data),
-                    )
+                    it.copy(cell = ViewProperty.Content(data))
                 }
             } catch (e: Exception) {
                 Log.e("CellActivationVM", "Ошибка загрузки ячейки", e)

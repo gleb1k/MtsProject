@@ -13,6 +13,7 @@ enum class CellSize(val label: String) {
 }
 
 data class CellUiModel(
+    val id: String,
     val number: Int,
     val pricePerHour: Int,
     val size: CellSize,
@@ -89,6 +90,7 @@ fun Locker.toDetailUiModel(cells: List<LockerCell>): LockerDetailUiModel {
 
 fun LockerCell.toUiModel(): CellUiModel {
     return CellUiModel(
+        id = id,
         number = number,
         pricePerHour = hourlyPrice.toDoubleOrNull()?.toInt() ?: 0,
         size = size.toCellSize(),
@@ -96,7 +98,7 @@ fun LockerCell.toUiModel(): CellUiModel {
     )
 }
 
-private fun String.toCellSize(): CellSize {
+internal fun String.toCellSize(): CellSize {
     return when (uppercase()) {
         "SMALL" -> CellSize.Small
         "MEDIUM" -> CellSize.Medium

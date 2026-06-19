@@ -40,7 +40,7 @@ import ru.glebik.mtsproject.ui.util.asString
 fun LockerDetailScreen(
     lockerId: String,
     onNavigateBack: () -> Unit,
-    onNavigateToCellActivation: (Int) -> Unit,
+    onNavigateToCellActivation: (String) -> Unit,
     viewModel: LockerDetailViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle().value
@@ -74,7 +74,7 @@ fun LockerDetailScreen(
 private fun LockerDetailContent(
     locker: LockerDetailUiModel,
     onBackClick: () -> Unit,
-    onCellClick: (Int) -> Unit,
+    onCellClick: (String) -> Unit,
 ) {
     val availableCells = locker.cells.filter { !it.isOccupied }
     val occupiedCells = locker.cells.filter { it.isOccupied }
@@ -119,7 +119,7 @@ private fun LockerDetailContent(
             items(availableCells) { cell ->
                 CellCard(
                     cell = cell,
-                    onClick = { onCellClick(cell.number) },
+                    onClick = { onCellClick(cell.id) },
                 )
             }
 

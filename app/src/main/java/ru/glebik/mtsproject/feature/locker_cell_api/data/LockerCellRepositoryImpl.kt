@@ -19,4 +19,10 @@ class LockerCellRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getLockerCellById(cellId: String): Result<LockerCell> {
+        return runCatching {
+            api.getLockerCellById(cellId).toDomain()
+        }
+    }
+
 }

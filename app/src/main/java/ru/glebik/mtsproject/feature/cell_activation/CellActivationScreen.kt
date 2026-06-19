@@ -43,15 +43,14 @@ import ru.glebik.mtsproject.ui.util.asString
 
 @Composable
 fun CellActivationScreen(
-    lockerId: String,
-    cellNumber: Int,
+    cellId: String,
     onNavigateBack: () -> Unit,
     viewModel: CellActivationViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle().value
 
-    LaunchedEffect(lockerId, cellNumber) {
-        viewModel.handleIntent(CellActivationIntent.Load(lockerId, cellNumber))
+    LaunchedEffect(cellId) {
+        viewModel.handleIntent(CellActivationIntent.Load(cellId))
     }
 
     LaunchedEffect(viewModel) {

@@ -25,8 +25,7 @@ data class LockerDetailNavKey(
 
 @Serializable
 data class CellActivationNavKey(
-    val lockerId: String,
-    val cellNumber: Int,
+    val cellId: String,
 ) : NavKey
 
 @Serializable
