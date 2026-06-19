@@ -18,16 +18,24 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import ru.glebik.mtsproject.core.time.DateTime
 import ru.glebik.mtsproject.R
 import ru.glebik.mtsproject.core.arch.util.ViewProperty
+import ru.glebik.mtsproject.ui.common.AppBadge
 import ru.glebik.mtsproject.ui.common.AppHeader
 import ru.glebik.mtsproject.ui.common.ContainerColumn
 import ru.glebik.mtsproject.ui.screen.ErrorScreen
@@ -51,20 +59,14 @@ fun MyRentsScreen(
     }
 
     when (val rentsState = state.rents) {
-        is ViewProperty.Loading -> {
-            LoaderScreen()
-        }
+        is ViewProperty.Loading -> LoaderScreen()
 
-        is ViewProperty.Content -> {
-            MyRentsContent(
-                rents = rentsState.content,
-                onBackClick = viewModel::onNavigateBack,
-            )
-        }
+        is ViewProperty.Content -> MyRentsContent(
+            rents = rentsState.content,
+            onBackClick = viewModel::onNavigateBack,
+        )
 
-        is ViewProperty.Error -> {
-            ErrorScreen(rentsState.errorMessage.asString())
-        }
+        is ViewProperty.Error -> ErrorScreen(rentsState.errorMessage.asString())
     }
 }
 
@@ -73,13 +75,16 @@ private fun MyRentsContent(
     rents: List<RentUiModel>,
     onBackClick: () -> Unit,
 ) {
+    val nowMillis = rememberCurrentTimeMillis()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(AppTheme.colors.frame.surface),
+            .background(AppTheme.colors.frame.background),
     ) {
         AppHeader(
             title = "Мои аренды",
+            subtitle = "Активные ячейки",
             onBackClick = onBackClick,
             bottomPadding = 24.dp,
         )
@@ -97,12 +102,31 @@ private fun MyRentsContent(
                 ),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                items(rents) { rent ->
-                    RentItem(rent = rent)
+                items(rents, key = { it.id }) { rent ->
+                    RentItem(
+                        rent = rent,
+                        nowMillis = nowMillis,
+                    )
                 }
             }
         }
     }
+}
+
+@Composable
+private fun rememberCurrentTimeMillis(
+    updateIntervalMillis: Long = 1_000L,
+): Long {
+    var nowMillis by remember { mutableLongStateOf(System.currentTimeMillis()) }
+
+    LaunchedEffect(updateIntervalMillis) {
+        while (true) {
+            nowMillis = System.currentTimeMillis()
+            delay(updateIntervalMillis)
+        }
+    }
+
+    return nowMillis
 }
 
 @Composable
@@ -119,7 +143,7 @@ private fun EmptyRentsList() {
                 .size(64.dp)
                 .background(
                     color = AppTheme.colors.icon.gray,
-                    shape = AppTheme.shapes.default
+                    shape = AppTheme.shapes.default,
                 ),
             contentAlignment = Alignment.Center,
         ) {
@@ -145,99 +169,113 @@ private fun EmptyRentsList() {
             text = "Здесь появятся ваши текущие и завершенные аренды",
             style = AppTheme.typography.body,
             color = AppTheme.colors.text.secondary,
-            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+            textAlign = TextAlign.Center,
         )
     }
 }
 
 @Composable
-private fun RentItem(rent: RentUiModel) {
+private fun RentItem(
+    rent: RentUiModel,
+    nowMillis: Long,
+) {
+    val now = remember(nowMillis) { DateTime.fromMillis(nowMillis) }
+
+    val rentalDuration = formatRentalDuration(
+        startedAt = rent.startedAt,
+        now = now,
+    )
+    val currentCost = calculateCurrentCost(
+        pricePerHour = rent.pricePerHour,
+        startedAt = rent.startedAt,
+        now = now,
+    )
+
     ContainerColumn(
         contentPadding = PaddingValues(16.dp),
         modifier = Modifier.fillMaxWidth(),
     ) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth(),
         ) {
             Text(
-                text = rent.lockerTitle,
+                text = "Ячейка #${rent.cellNumber}",
                 style = AppTheme.typography.title.copy(fontWeight = FontWeight.Bold),
                 color = AppTheme.colors.text.primary,
             )
 
-            Text(
-                text = when (rent.status) {
-                    RentUiModel.RentStatus.ACTIVE -> "Активна"
-                    RentUiModel.RentStatus.WAITING_CLOSE -> "Ждет закрытия"
-                    RentUiModel.RentStatus.PAYMENT -> "Ждет оплаты"
-                    RentUiModel.RentStatus.COMPLETED -> "Завершена"
-                    RentUiModel.RentStatus.CANCELLED -> "Отменена"
-                    RentUiModel.RentStatus.OVERDUE -> "Просрочена"
-                },
-                style = AppTheme.typography.caption,
-                color = when (rent.status) {
-                    RentUiModel.RentStatus.ACTIVE -> AppTheme.colors.frame.onActive
-                    else -> AppTheme.colors.text.secondary
-                },
+            AppBadge(
+                text = rent.status.toBadgeText(),
+                backgroundColor = AppTheme.colors.text.primary,
+                textColor = AppTheme.colors.frame.surface,
+                verticalPadding = 6.dp,
             )
         }
+
+        Text(
+            text = rent.cellSizeLabel,
+            style = AppTheme.typography.body,
+            color = AppTheme.colors.text.secondary,
+            modifier = Modifier.padding(top = 8.dp),
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        RentDetailRow(
+            iconRes = R.drawable.location_pin_24,
+            text = rent.lockerAddress,
+        )
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            Icon(
-                painterResource(R.drawable.location_pin_24),
-                contentDescription = "",
-                tint = AppTheme.colors.icon.onGray,
-                modifier = Modifier.size(20.dp),
-            )
-            Spacer(modifier = Modifier.size(4.dp))
-            Text(
-                text = rent.lockerAddress,
-                style = AppTheme.typography.body,
-                color = AppTheme.colors.text.secondary,
-            )
-        }
+        RentDetailRow(
+            iconRes = R.drawable.clock_24,
+            text = "Время аренды: $rentalDuration",
+        )
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            Icon(
-                painterResource(R.drawable.common_box_24),
-                contentDescription = "",
-                tint = AppTheme.colors.icon.onGray,
-                modifier = Modifier.size(20.dp),
-            )
-            Spacer(modifier = Modifier.size(4.dp))
-            Text(
-                text = "Ячейка #${rent.cellNumber}",
-                style = AppTheme.typography.body,
-                color = AppTheme.colors.text.secondary,
-            )
-        }
+        RentDetailRow(
+            iconRes = R.drawable.credit_card_24,
+            text = "Текущая стоимость: $currentCost ₽",
+        )
+    }
+}
 
-        Spacer(modifier = Modifier.height(8.dp))
+@Composable
+private fun RentDetailRow(
+    iconRes: Int,
+    text: String,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(
+            painter = painterResource(iconRes),
+            contentDescription = null,
+            tint = AppTheme.colors.icon.onGray,
+            modifier = Modifier.size(20.dp),
+        )
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            Icon(
-                painterResource(R.drawable.common_box_24),
-                contentDescription = "",
-                tint = AppTheme.colors.icon.onGray,
-                modifier = Modifier.size(20.dp),
-            )
-            Spacer(modifier = Modifier.size(4.dp))
-            Text(
-                text = "${rent.startTime} - ${rent.endTime ?: "В процессе"}",
-                style = AppTheme.typography.body,
-                color = AppTheme.colors.text.secondary,
-            )
-        }
+        Text(
+            text = text,
+            style = AppTheme.typography.body,
+            color = AppTheme.colors.text.secondary,
+            modifier = Modifier.padding(start = 8.dp),
+        )
+    }
+}
+
+private fun RentUiModel.RentStatus.toBadgeText(): String {
+    return when (this) {
+        RentUiModel.RentStatus.ACTIVE -> "Активно"
+        RentUiModel.RentStatus.WAITING_CLOSE -> "Ждет закрытия"
+        RentUiModel.RentStatus.PAYMENT -> "Ждет оплаты"
+        RentUiModel.RentStatus.COMPLETED -> "Завершена"
+        RentUiModel.RentStatus.CANCELLED -> "Отменена"
+        RentUiModel.RentStatus.OVERDUE -> "Просрочена"
     }
 }

@@ -7,17 +7,20 @@ import kotlinx.coroutines.flow.update
 import ru.glebik.mtsproject.core.arch.BaseViewModel
 import ru.glebik.mtsproject.core.arch.util.ViewProperty
 import ru.glebik.mtsproject.core.util.UiText
+import ru.glebik.mtsproject.feature.locker_api.domain.GetLockerByIdUseCase
+import ru.glebik.mtsproject.feature.locker_cell_api.domain.GetLockerCellByIdUseCase
 import ru.glebik.mtsproject.feature.rents_api.domain.GetRentsUseCase
+import ru.glebik.mtsproject.feature.rents_api.domain.model.Rental
 import javax.inject.Inject
 
 @HiltViewModel
 class MyRentsViewModel @Inject constructor(
     private val getRentsUseCase: GetRentsUseCase,
+    private val getLockerCellByIdUseCase: GetLockerCellByIdUseCase,
+    private val getLockerByIdUseCase: GetLockerByIdUseCase,
 ) : BaseViewModel<MyRentsUiState, MyRentsEffect, MyRentsIntent>() {
 
-    override fun initialState(): MyRentsUiState {
-        return MyRentsUiState()
-    }
+    override fun initialState(): MyRentsUiState = MyRentsUiState()
 
     init {
         handleIntent(MyRentsIntent.Load)
@@ -36,25 +39,32 @@ class MyRentsViewModel @Inject constructor(
             }
 
             try {
-                val result = getRentsUseCase()
-                val data = result.getOrThrow().map { it.toUiModel() }
+                val rentals = getRentsUseCase().getOrThrow()
+                val data = rentals
+                    .map { rental -> rental.toUiModel() }
+                    .filter { it.status == RentUiModel.RentStatus.ACTIVE }
 
                 mutableState.value = mutableState.value.copy(
-                    rents = ViewProperty.Content(data)
+                    rents = ViewProperty.Content(data),
                 )
-
             } catch (e: Exception) {
                 Log.e("MyRentsVM", "Ошибка загрузки аренд", e)
                 mutableState.update {
                     it.copy(
                         rents = ViewProperty.Error(
                             errorMessage = UiText.DynamicString("Ошибка загрузки аренд"),
-                            error = e
+                            error = e,
                         )
                     )
                 }
             }
         }
+    }
+
+    private suspend fun Rental.toUiModel(): RentUiModel {
+        val cell = getLockerCellByIdUseCase(cellId).getOrNull()
+        val locker = cell?.let { getLockerByIdUseCase(it.stationId).getOrNull() }
+        return toUiModel(cell = cell, locker = locker)
     }
 
     fun onNavigateBack() {
