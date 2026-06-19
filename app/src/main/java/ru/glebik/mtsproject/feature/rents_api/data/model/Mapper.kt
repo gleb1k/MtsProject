@@ -1,13 +1,13 @@
-package ru.glebik.mtsproject.feature.my_rents.data.model
+package ru.glebik.mtsproject.feature.rents_api.data.model
 
-import ru.glebik.mtsproject.feature.my_rents.domain.model.Rental
+import ru.glebik.mtsproject.feature.rents_api.domain.model.Rental
 
-fun RentalResponse.toDomainModel(): Rental {
+fun RentalResponse.toDomain(): Rental {
     return Rental(
         id = id,
         userId = userId,
         cellId = cellId,
-        pricePerHour = pricePerHour,
+        pricePerHour = pricePerHour.toInt(),
         status = Rental.Status.valueOf(status),
         paymentStatus = Rental.PaymentStatus.valueOf(paymentStatus),
         paymentMethodId = paymentMethodId,

@@ -16,4 +16,7 @@ data class RegisterRequest(
 
     @SerialName("status")
     val status: String,
+
+    @SerialName("password")
+    val password: String,
 )

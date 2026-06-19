@@ -1,8 +1,7 @@
-package ru.glebik.mtsproject.feature.my_rents.data.model
+package ru.glebik.mtsproject.feature.rents_api.data.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import java.util.UUID
 
 @Serializable
 data class RentalResponse(
@@ -13,7 +12,7 @@ data class RentalResponse(
     val cellId: String,
 
     @SerialName("price_per_hour")
-    val pricePerHour: Int,
+    val pricePerHour: Double,
 
     @SerialName("status")
     val status: String,
@@ -28,7 +27,7 @@ data class RentalResponse(
     val id: String,
 
     @SerialName("started_at")
-    val startedAt: String,
+    val startedAt: String?,
 
     @SerialName("ended_at")
     val endedAt: String?,

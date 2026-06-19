@@ -7,12 +7,12 @@ import kotlinx.coroutines.flow.update
 import ru.glebik.mtsproject.core.arch.BaseViewModel
 import ru.glebik.mtsproject.core.arch.util.ViewProperty
 import ru.glebik.mtsproject.core.util.UiText
-import ru.glebik.mtsproject.feature.my_rents.domain.GetMyRentsUseCase
+import ru.glebik.mtsproject.feature.rents_api.domain.GetRentsUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class MyRentsViewModel @Inject constructor(
-    private val getMyRentsUseCase: GetMyRentsUseCase,
+    private val getRentsUseCase: GetRentsUseCase,
 ) : BaseViewModel<MyRentsUiState, MyRentsEffect, MyRentsIntent>() {
 
     override fun initialState(): MyRentsUiState {
@@ -36,7 +36,7 @@ class MyRentsViewModel @Inject constructor(
             }
 
             try {
-                val result = getMyRentsUseCase()
+                val result = getRentsUseCase()
                 val data = result.getOrThrow().map { it.toUiModel() }
 
                 mutableState.value = mutableState.value.copy(

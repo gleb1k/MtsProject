@@ -23,6 +23,7 @@ class AuthRepositoryImpl @Inject constructor(
                     email = email,
                     fullName = nickname,
                     status = "active",
+                    password = "temp123"
                 )
             )
 

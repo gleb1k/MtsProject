@@ -1,4 +1,4 @@
-package ru.glebik.mtsproject.feature.my_rents.domain.model
+package ru.glebik.mtsproject.feature.rents_api.domain.model
 
 data class Rental(
     val id: String,
@@ -8,7 +8,7 @@ data class Rental(
     val status: Status,
     val paymentStatus: PaymentStatus,
     val paymentMethodId: String?,
-    val startedAt: String,
+    val startedAt: String?,
     val endedAt: String?,
     val finalAmount: Int?,
     val openedAt: String?,

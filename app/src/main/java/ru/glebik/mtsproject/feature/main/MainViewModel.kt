@@ -10,7 +10,7 @@ import ru.glebik.mtsproject.core.session.UserSession
 import ru.glebik.mtsproject.core.util.UiText
 import ru.glebik.mtsproject.feature.locker_api.domain.GetLockersUseCase
 import ru.glebik.mtsproject.feature.locker_api.domain.model.Locker
-import ru.glebik.mtsproject.feature.my_rents.domain.GetMyRentsCountUseCase
+import ru.glebik.mtsproject.feature.rents_api.domain.GetRentsCountUseCase
 import javax.inject.Inject
 
 
@@ -18,7 +18,7 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val getLockersUseCase: GetLockersUseCase,
     private val userSession: UserSession,
-    private val getMyRentsCountUseCase: GetMyRentsCountUseCase,
+    private val getRentsCountUseCase: GetRentsCountUseCase,
 ) : BaseViewModel<MainUiState, MainEffect, MainIntent>() {
 
     override fun initialState(): MainUiState {
@@ -85,7 +85,7 @@ class MainViewModel @Inject constructor(
     private fun loadMyRentsCount() {
         viewModelScope.launchSafe {
             try {
-                val count = getMyRentsCountUseCase()
+                val count = getRentsCountUseCase()
                 mutableState.update {
                     it.copy(myRentsCount = count)
                 }

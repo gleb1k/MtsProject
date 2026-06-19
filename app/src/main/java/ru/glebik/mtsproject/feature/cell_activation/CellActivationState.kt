@@ -6,6 +6,7 @@ import ru.glebik.mtsproject.core.arch.UiState
 import ru.glebik.mtsproject.core.arch.util.ViewProperty
 
 data class CellActivationUiState(
+    val cellId: String = "",
     val cell: ViewProperty<CellActivationUiModel> = ViewProperty.Loading,
     val cardNumber: String = "",
     val expiryDate: String = "",

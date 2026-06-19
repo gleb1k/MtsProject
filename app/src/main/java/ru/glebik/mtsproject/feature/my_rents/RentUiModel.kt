@@ -1,14 +1,14 @@
 package ru.glebik.mtsproject.feature.my_rents
 
 import ru.glebik.mtsproject.feature.my_rents.RentUiModel.RentStatus
-import ru.glebik.mtsproject.feature.my_rents.domain.model.Rental
+import ru.glebik.mtsproject.feature.rents_api.domain.model.Rental
 
 data class RentUiModel(
     val id: String,
     val lockerTitle: String,
     val lockerAddress: String,
     val cellNumber: Int,
-    val startTime: String,
+    val startTime: String?,
     val endTime: String?,
     val status: RentStatus,
 ) {

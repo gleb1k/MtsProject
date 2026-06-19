@@ -10,6 +10,8 @@ import ru.glebik.mtsproject.core.util.UiText
 import ru.glebik.mtsproject.feature.locker_api.domain.GetLockerByIdUseCase
 import ru.glebik.mtsproject.feature.locker_cell_api.domain.GetLockerCellByIdUseCase
 import ru.glebik.mtsproject.feature.payment.domain.usecase.CreatePaymentMethodUseCase
+import ru.glebik.mtsproject.feature.rents_api.domain.CreateRentalUseCase
+import ru.glebik.mtsproject.feature.rents_api.domain.StartRentalUseCase
 import javax.inject.Inject
 
 @HiltViewModel
@@ -17,6 +19,8 @@ class CellActivationViewModel @Inject constructor(
     private val getLockerCellByIdUseCase: GetLockerCellByIdUseCase,
     private val getLockerByIdUseCase: GetLockerByIdUseCase,
     private val createPaymentMethodUseCase: CreatePaymentMethodUseCase,
+    private val createRentalUseCase: CreateRentalUseCase,
+    private val startRentalUseCase: StartRentalUseCase,
 ) : BaseViewModel<CellActivationUiState, CellActivationEffect, CellActivationIntent>() {
 
     override fun initialState(): CellActivationUiState = CellActivationUiState()
@@ -59,7 +63,9 @@ class CellActivationViewModel @Inject constructor(
 
     private fun loadCell(cellId: String) {
         viewModelScope.launchSafe {
-            mutableState.update { it.copy(cell = ViewProperty.Loading) }
+            mutableState.update {
+                it.copy(cellId = cellId, cell = ViewProperty.Loading)
+            }
 
             try {
                 val cell = getLockerCellByIdUseCase(cellId).getOrThrow()
@@ -87,6 +93,14 @@ class CellActivationViewModel @Inject constructor(
         val state = mutableState.value
         if (state.isSubmitting) return
 
+        val cell = (state.cell as? ViewProperty.Content)?.content
+        if (cell == null || state.cellId.isBlank()) {
+            mutableState.update {
+                it.copy(submitError = "Данные ячейки не загружены")
+            }
+            return
+        }
+
         val maskedPan = formatMaskedPan(state.cardNumber)
         if (maskedPan == null) {
             mutableState.update {
@@ -100,20 +114,30 @@ class CellActivationViewModel @Inject constructor(
                 it.copy(isSubmitting = true, submitError = null)
             }
 
-            createPaymentMethodUseCase(
-                provider = PAYMENT_PROVIDER,
-                maskedPan = maskedPan,
-                token = "",
-                isVerified = true,
-            ).onSuccess {
+            try {
+                val paymentMethod = createPaymentMethodUseCase(
+                    provider = PAYMENT_PROVIDER,
+                    maskedPan = maskedPan,
+                    token = "",
+                    isVerified = true,
+                ).getOrThrow()
+
+                val rental = createRentalUseCase(
+                    cellId = state.cellId,
+                    pricePerHour = cell.pricePerHour,
+                    paymentMethodId = paymentMethod.id,
+                ).getOrThrow()
+
+                startRentalUseCase(rental.id).getOrThrow()
+
                 mutableState.update { it.copy(isSubmitting = false) }
                 mutableEffect.emit(CellActivationEffect.NavigateToMyRents)
-            }.onFailure { error ->
-                Log.e("CellActivationVM", "Ошибка сохранения карты", error)
+            } catch (error: Exception) {
+                Log.e("CellActivationVM", "Ошибка активации ячейки", error)
                 mutableState.update {
                     it.copy(
                         isSubmitting = false,
-                        submitError = error.message ?: "Ошибка сохранения карты",
+                        submitError = error.message ?: "Ошибка активации ячейки",
                     )
                 }
             }
