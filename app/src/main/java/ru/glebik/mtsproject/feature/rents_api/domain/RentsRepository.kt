@@ -14,4 +14,6 @@ interface RentsRepository {
     ): Result<Rental>
 
     suspend fun startRental(rentalId: String): Result<Rental>
+
+    suspend fun closeRental(rentalId: String): Result<Rental>
 }

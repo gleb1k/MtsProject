@@ -104,7 +104,7 @@ class RegisterViewModel @Inject constructor(
                 mutableState.update {
                     it.copy(
                         isLoading = false,
-                        error = throwable.message ?: "Unknown error",
+                        error = throwable.message ?: "Неизвестная ошибка",
                     )
                 }
             }

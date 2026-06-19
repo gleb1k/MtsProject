@@ -13,7 +13,7 @@ data class AppTypography(
 
 internal val appTypography = AppTypography(
     header = TextStyle(
-        fontSize = 26.sp,
+        fontSize = 22.sp,
         lineHeight = 30.sp
     ),
 

@@ -7,7 +7,6 @@ import ru.glebik.mtsproject.core.arch.util.ViewProperty
 
 data class RentDetailUiState(
     val rent: ViewProperty<RentDetailUiModel> = ViewProperty.Loading,
-    val isEndingRental: Boolean = false,
 ) : UiState
 
 sealed interface RentDetailIntent : UiIntent {
@@ -18,4 +17,9 @@ sealed interface RentDetailIntent : UiIntent {
 
 sealed interface RentDetailEffect : UiEffect {
     data object NavigateBack : RentDetailEffect
+
+    data class NavigateToRentCompletion(
+        val rentalId: String,
+        val cellNumber: Int,
+    ) : RentDetailEffect
 }

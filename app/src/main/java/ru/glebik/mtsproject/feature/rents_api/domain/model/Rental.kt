@@ -25,3 +25,7 @@ data class Rental(
         PENDING, PAID, FAILED, DEBT
     }
 }
+
+fun Rental.isActiveRental(): Boolean {
+    return status == Rental.Status.CREATED || status == Rental.Status.ACTIVE
+}

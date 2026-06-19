@@ -1,5 +1,7 @@
 package ru.glebik.mtsproject.feature.auth.data
 
+import kotlinx.serialization.json.Json
+import ru.glebik.mtsproject.core.network.toApiErrorMessage
 import ru.glebik.mtsproject.feature.auth.data.api.AuthApi
 import ru.glebik.mtsproject.feature.auth.data.mapper.toDomain
 import ru.glebik.mtsproject.feature.auth.data.model.RegisterRequest
@@ -9,6 +11,7 @@ import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
     private val api: AuthApi,
+    private val json: Json,
 ) : AuthRepository {
 
     override suspend fun register(
@@ -28,7 +31,10 @@ class AuthRepositoryImpl @Inject constructor(
             )
 
             response.toDomain()
-        }
+        }.fold(
+            onSuccess = { Result.success(it) },
+            onFailure = { Result.failure(Exception(it.toApiErrorMessage(json))) },
+        )
     }
 
     override suspend fun getUsers(): Result<List<User>> {

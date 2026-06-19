@@ -55,6 +55,7 @@ import ru.glebik.mtsproject.ui.util.asString
 fun RentDetailScreen(
     rentalId: String,
     onNavigateBack: () -> Unit,
+    onNavigateToRentCompletion: (rentalId: String, cellNumber: Int) -> Unit,
     viewModel: RentDetailViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle().value
@@ -67,6 +68,10 @@ fun RentDetailScreen(
         viewModel.effect.collectLatest { effect ->
             when (effect) {
                 RentDetailEffect.NavigateBack -> onNavigateBack()
+                is RentDetailEffect.NavigateToRentCompletion -> onNavigateToRentCompletion(
+                    effect.rentalId,
+                    effect.cellNumber,
+                )
             }
         }
     }
@@ -76,7 +81,6 @@ fun RentDetailScreen(
 
         is ViewProperty.Content -> RentDetailContent(
             rent = rentState.content,
-            isEndingRental = state.isEndingRental,
             onBackClick = { viewModel.handleIntent(RentDetailIntent.Back) },
             onEndRentalClick = { viewModel.handleIntent(RentDetailIntent.EndRental) },
         )
@@ -88,7 +92,6 @@ fun RentDetailScreen(
 @Composable
 private fun RentDetailContent(
     rent: RentDetailUiModel,
-    isEndingRental: Boolean,
     onBackClick: () -> Unit,
     onEndRentalClick: () -> Unit,
 ) {
@@ -151,7 +154,6 @@ private fun RentDetailContent(
         DangerIconButton(
             text = "Закончить аренду",
             onClick = onEndRentalClick,
-            loading = isEndingRental,
             modifier = Modifier
                 .padding(horizontal = 16.dp)
                 .padding(top = 8.dp, bottom = 16.dp)

@@ -150,7 +150,7 @@ private fun CellActivationContent(
 
             PrimaryIconButton(
                 text = if (isSubmitting) "Сохранение..." else "Открыть ячейку",
-                iconRes = R.drawable.unlock_24,
+                iconRes = R.drawable.lock_24,
                 onClick = onOpenCellClick,
                 loading = isSubmitting,
             )

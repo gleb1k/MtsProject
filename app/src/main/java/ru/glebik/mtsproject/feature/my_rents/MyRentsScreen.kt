@@ -19,10 +19,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -33,6 +34,8 @@ import kotlinx.coroutines.flow.collectLatest
 import ru.glebik.mtsproject.R
 import ru.glebik.mtsproject.core.arch.util.ViewProperty
 import ru.glebik.mtsproject.core.time.DateTime
+import ru.glebik.mtsproject.feature.locker_detail.toStyle
+import ru.glebik.mtsproject.feature.my_rents.RentUiModel.RentStatus
 import ru.glebik.mtsproject.ui.common.AppBadge
 import ru.glebik.mtsproject.ui.common.AppHeader
 import ru.glebik.mtsproject.ui.common.ContainerColumn
@@ -78,6 +81,8 @@ private fun MyRentsContent(
     onRentClick: (String) -> Unit,
 ) {
     val nowMillis = rememberRentNowMillis()
+    val activeRents = rents.filter { it.isActive }
+    val inactiveRents = rents.filter { !it.isActive }
 
     Column(
         modifier = Modifier
@@ -86,7 +91,7 @@ private fun MyRentsContent(
     ) {
         AppHeader(
             title = "Мои аренды",
-            subtitle = "Активные ячейки",
+            subtitle = "Все аренды",
             onBackClick = onBackClick,
             bottomPadding = 24.dp,
         )
@@ -104,16 +109,47 @@ private fun MyRentsContent(
                 ),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                items(rents, key = { it.id }) { rent ->
-                    RentItem(
-                        rent = rent,
-                        nowMillis = nowMillis,
-                        onClick = { onRentClick(rent.id) },
-                    )
+                if (activeRents.isNotEmpty()) {
+                    item {
+                        SectionTitle("Активные")
+                    }
+
+                    items(activeRents, key = { it.id }) { rent ->
+                        RentItem(
+                            rent = rent,
+                            nowMillis = nowMillis,
+                            onClick = { onRentClick(rent.id) },
+                        )
+                    }
+                }
+
+                if (inactiveRents.isNotEmpty()) {
+                    item {
+                        Spacer(modifier = Modifier.height(if (activeRents.isNotEmpty()) 8.dp else 0.dp))
+                        SectionTitle("Завершённые")
+                    }
+
+                    items(inactiveRents, key = { it.id }) { rent ->
+                        RentItem(
+                            rent = rent,
+                            nowMillis = nowMillis,
+                            onClick = null,
+                        )
+                    }
                 }
             }
         }
     }
+}
+
+@Composable
+private fun SectionTitle(text: String) {
+    Text(
+        text = text,
+        style = AppTheme.typography.caption.copy(fontWeight = FontWeight.Bold),
+        color = AppTheme.colors.text.secondary,
+        modifier = Modifier.padding(bottom = 4.dp),
+    )
 }
 
 @Composable
@@ -145,7 +181,7 @@ private fun EmptyRentsList() {
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "Нет активных аренд",
+            text = "Нет аренд",
             style = AppTheme.typography.title.copy(fontWeight = FontWeight.Bold),
             color = AppTheme.colors.text.primary,
         )
@@ -153,7 +189,7 @@ private fun EmptyRentsList() {
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "Здесь появятся ваши текущие и завершенные аренды",
+            text = "Здесь появятся ваши текущие и завершённые аренды",
             style = AppTheme.typography.body,
             color = AppTheme.colors.text.secondary,
             textAlign = TextAlign.Center,
@@ -165,9 +201,21 @@ private fun EmptyRentsList() {
 private fun RentItem(
     rent: RentUiModel,
     nowMillis: Long,
-    onClick: () -> Unit,
+    onClick: (() -> Unit)?,
 ) {
     val now = remember(nowMillis) { DateTime.fromMillis(nowMillis) }
+    val displayStatus = if (rent.isActive) {
+        rent.status
+    } else {
+        RentStatus.COMPLETED
+    }
+    val badgeStyle = displayStatus.toBadgeColors()
+    val cellStyle = rent.cellSize.toStyle(AppTheme.colors.icon, isOccupied = false)
+    val titleColor = if (rent.isActive) {
+        AppTheme.colors.text.primary
+    } else {
+        AppTheme.colors.text.secondary
+    }
 
     val rentalDuration = formatRentalDuration(
         startedAt = rent.startedAt,
@@ -183,7 +231,14 @@ private fun RentItem(
         contentPadding = PaddingValues(16.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick),
+            .alpha(if (rent.isActive) 1f else 0.75f)
+            .then(
+                if (onClick != null) {
+                    Modifier.clickable(onClick = onClick)
+                } else {
+                    Modifier
+                },
+            ),
     ) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -193,21 +248,22 @@ private fun RentItem(
             Text(
                 text = "Ячейка #${rent.cellNumber}",
                 style = AppTheme.typography.title.copy(fontWeight = FontWeight.Bold),
-                color = AppTheme.colors.text.primary,
+                color = titleColor,
             )
 
             AppBadge(
-                text = rent.status.toBadgeText(),
-                backgroundColor = AppTheme.colors.text.primary,
-                textColor = AppTheme.colors.frame.surface,
+                text = displayStatus.toBadgeText(),
+                backgroundColor = badgeStyle.first,
+                textColor = badgeStyle.second,
                 verticalPadding = 6.dp,
             )
         }
 
-        Text(
-            text = rent.cellSizeLabel,
-            style = AppTheme.typography.body,
-            color = AppTheme.colors.text.secondary,
+        AppBadge(
+            text = rent.cellSize.label,
+            backgroundColor = cellStyle.badgeColor,
+            textColor = cellStyle.badgeTextColor,
+            verticalPadding = 4.dp,
             modifier = Modifier.padding(top = 8.dp),
         )
 
@@ -216,21 +272,45 @@ private fun RentItem(
         RentDetailRow(
             iconRes = R.drawable.location_pin_24,
             text = rent.lockerAddress,
+            muted = !rent.isActive,
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        RentDetailRow(
-            iconRes = R.drawable.clock_24,
-            text = "Время аренды: $rentalDuration",
-        )
+        if (rent.isActive) {
+            RentDetailRow(
+                iconRes = R.drawable.clock_24,
+                text = "Время аренды: $rentalDuration",
+            )
 
-        Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
-        RentDetailRow(
-            iconRes = R.drawable.credit_card_24,
-            text = "Текущая стоимость: $currentCost ₽",
-        )
+            RentDetailRow(
+                iconRes = R.drawable.credit_card_24,
+                text = "Текущая стоимость: $currentCost ₽",
+            )
+        } else {
+            RentDetailRow(
+                iconRes = R.drawable.clock_24,
+                text = "Статус: ${displayStatus.toBadgeText()}",
+                muted = true,
+            )
+        }
+    }
+}
+
+@Composable
+private fun RentStatus.toBadgeColors(): Pair<Color, Color> {
+    return when (this) {
+        RentStatus.ACTIVE -> AppTheme.colors.text.primary to AppTheme.colors.frame.surface
+
+        RentStatus.WAITING_CLOSE,
+        RentStatus.PAYMENT -> AppTheme.colors.warning.background to AppTheme.colors.warning.text
+
+        RentStatus.OVERDUE -> AppTheme.colors.frame.error.copy(alpha = 0.15f) to AppTheme.colors.frame.error
+
+        RentStatus.COMPLETED,
+        RentStatus.CANCELLED -> AppTheme.colors.icon.gray to AppTheme.colors.text.secondary
     }
 }
 
@@ -238,7 +318,14 @@ private fun RentItem(
 private fun RentDetailRow(
     iconRes: Int,
     text: String,
+    muted: Boolean = false,
 ) {
+    val textColor = if (muted) {
+        AppTheme.colors.text.secondary.copy(alpha = 0.8f)
+    } else {
+        AppTheme.colors.text.secondary
+    }
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -253,7 +340,7 @@ private fun RentDetailRow(
         Text(
             text = text,
             style = AppTheme.typography.body,
-            color = AppTheme.colors.text.secondary,
+            color = textColor,
             modifier = Modifier.padding(start = 8.dp),
         )
     }

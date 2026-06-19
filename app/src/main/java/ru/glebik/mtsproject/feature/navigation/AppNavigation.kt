@@ -23,6 +23,9 @@ import ru.glebik.mtsproject.feature.main.MainScreen
 import ru.glebik.mtsproject.feature.my_rents.MyRentsScreen
 import ru.glebik.mtsproject.feature.onboarding.OnboardingScreen
 import ru.glebik.mtsproject.feature.profile.ProfileScreen
+import ru.glebik.mtsproject.feature.rent_completion.RentCompletionScreen
+import ru.glebik.mtsproject.feature.rent_payment.RentPaymentScreen
+import ru.glebik.mtsproject.feature.rent_payment.RentPaymentSuccessScreen
 import ru.glebik.mtsproject.feature.rent_detail.RentDetailScreen
 
 const val TRANSITION_ANIMATION_DURATION_MS = 350
@@ -74,7 +77,7 @@ fun AppNavigation(
                     onNavigateToRegister = { backStack.add(RegisterNavKey) },
                     onNavigateToMain = {
                         backStack.clear()
-                        backStack.add(MainNavKey)
+                        backStack.add(MainNavKey())
                     },
                     onNavigateToLogin = {
                         backStack.add(LoginNavKey)
@@ -87,7 +90,7 @@ fun AppNavigation(
                     onNavigateBack = { backStack.removeLastOrNull() },
                     onNavigateToMain = {
                         backStack.clear()
-                        backStack.add(MainNavKey)
+                        backStack.add(MainNavKey())
                     },
                 )
             }
@@ -97,13 +100,14 @@ fun AppNavigation(
                     onNavigateBack = { backStack.removeLastOrNull() },
                     onNavigateToMain = {
                         backStack.clear()
-                        backStack.add(MainNavKey)
+                        backStack.add(MainNavKey())
                     },
                 )
             }
 
-            entry<MainNavKey> {
+            entry<MainNavKey> { key ->
                 MainScreen(
+                    showRentalCompleted = key.showRentalCompleted,
                     onNavigateToProfile = { backStack.add(ProfileNavKey) },
                     onNavigateToLockerDetail = { lockerId ->
                         backStack.add(LockerDetailNavKey(lockerId))
@@ -125,6 +129,42 @@ fun AppNavigation(
                 RentDetailScreen(
                     rentalId = key.rentalId,
                     onNavigateBack = { backStack.removeLastOrNull() },
+                    onNavigateToRentCompletion = { rentalId, cellNumber ->
+                        backStack.add(
+                            RentCompletionNavKey(
+                                rentalId = rentalId,
+                                cellNumber = cellNumber,
+                            )
+                        )
+                    },
+                )
+            }
+
+            entry<RentCompletionNavKey> { key ->
+                RentCompletionScreen(
+                    rentalId = key.rentalId,
+                    cellNumber = key.cellNumber,
+                    onNavigateBack = { backStack.removeLastOrNull() },
+                    onNavigateToPayment = {
+                        backStack.add(RentPaymentNavKey)
+                    },
+                )
+            }
+
+            entry<RentPaymentNavKey> {
+                RentPaymentScreen(
+                    onNavigateToSuccess = {
+                        backStack.add(RentPaymentSuccessNavKey)
+                    },
+                )
+            }
+
+            entry<RentPaymentSuccessNavKey> {
+                RentPaymentSuccessScreen(
+                    onNavigateToMain = {
+                        backStack.clear()
+                        backStack.add(MainNavKey(showRentalCompleted = true))
+                    },
                 )
             }
 
@@ -144,7 +184,7 @@ fun AppNavigation(
                     onNavigateBack = { backStack.removeLastOrNull() },
                     onNavigateToMyRents = {
                         backStack.clear()
-                        backStack.add(MainNavKey)
+                        backStack.add(MainNavKey())
                         backStack.add(MyRentsNavKey)
                     },
                 )

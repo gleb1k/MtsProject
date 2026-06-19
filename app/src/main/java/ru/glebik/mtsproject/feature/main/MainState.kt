@@ -9,7 +9,7 @@ import ru.glebik.mtsproject.feature.auth.domain.model.User
 data class MainUiState(
     val lockers: ViewProperty<List<LockerUiModel>> = ViewProperty.Loading,
     val nickName: String,
-    val myRentsCount: Int = 0,
+    val myRentsCount: Int,
 ) : UiState
 
 sealed interface MainIntent : UiIntent {

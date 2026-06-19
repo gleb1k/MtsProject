@@ -13,7 +13,9 @@ data object RegisterNavKey : NavKey
 data object LoginNavKey : NavKey
 
 @Serializable
-data object MainNavKey : NavKey
+data class MainNavKey(
+    val showRentalCompleted: Boolean = false,
+) : NavKey
 
 @Serializable
 data object ProfileNavKey : NavKey
@@ -35,3 +37,15 @@ data object MyRentsNavKey : NavKey
 data class RentDetailNavKey(
     val rentalId: String,
 ) : NavKey
+
+@Serializable
+data class RentCompletionNavKey(
+    val rentalId: String,
+    val cellNumber: Int,
+) : NavKey
+
+@Serializable
+data object RentPaymentNavKey : NavKey
+
+@Serializable
+data object RentPaymentSuccessNavKey : NavKey

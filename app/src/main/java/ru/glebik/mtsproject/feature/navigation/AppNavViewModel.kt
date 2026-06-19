@@ -14,7 +14,7 @@ class AppNavViewModel @Inject constructor(
 
     fun startDestination(): NavKey {
         return if (userSession.isLoggedIn()) {
-            MainNavKey
+            MainNavKey()
         } else {
             OnboardingNavKey
         }

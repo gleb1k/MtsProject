@@ -72,12 +72,15 @@ class RentDetailViewModel @Inject constructor(
     }
 
     private fun endRental() {
-        if (mutableState.value.isEndingRental) return
+        val rent = (mutableState.value.rent as? ViewProperty.Content)?.content ?: return
 
         viewModelScope.launchSafe {
-            mutableState.update { it.copy(isEndingRental = true) }
-            // TODO: вызов API завершения аренды
-            mutableState.update { it.copy(isEndingRental = false) }
+            mutableEffect.emit(
+                RentDetailEffect.NavigateToRentCompletion(
+                    rentalId = rent.id,
+                    cellNumber = rent.cellNumber,
+                )
+            )
         }
     }
 

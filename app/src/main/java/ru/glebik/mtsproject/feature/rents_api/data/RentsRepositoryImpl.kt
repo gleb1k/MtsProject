@@ -45,4 +45,10 @@ class RentsRepositoryImpl @Inject constructor(
             api.startRental(rentalId).toDomain()
         }
     }
+
+    override suspend fun closeRental(rentalId: String): Result<Rental> {
+        return runCatching {
+            api.closeRental(rentalId).toDomain()
+        }
+    }
 }

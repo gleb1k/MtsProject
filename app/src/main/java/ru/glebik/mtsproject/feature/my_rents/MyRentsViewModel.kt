@@ -42,7 +42,10 @@ class MyRentsViewModel @Inject constructor(
                 val rentals = getRentsUseCase().getOrThrow()
                 val data = rentals
                     .map { rental -> rental.toUiModel() }
-                    .filter { it.status == RentUiModel.RentStatus.ACTIVE }
+                    .sortedWith(
+                        compareByDescending<RentUiModel> { it.isActive }
+                            .thenByDescending { it.startedAt?.instant?.toEpochMilli() ?: 0L },
+                    )
 
                 mutableState.value = mutableState.value.copy(
                     rents = ViewProperty.Content(data),

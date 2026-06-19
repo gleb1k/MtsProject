@@ -26,4 +26,9 @@ interface RentsApi {
     suspend fun startRental(
         @Path("rental_id") rentalId: String,
     ): RentalResponse
+
+    @POST("/api/v1/rentals/{rental_id}/close")
+    suspend fun closeRental(
+        @Path("rental_id") rentalId: String,
+    ): RentalResponse
 }

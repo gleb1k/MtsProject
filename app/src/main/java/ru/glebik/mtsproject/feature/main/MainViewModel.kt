@@ -26,26 +26,33 @@ class MainViewModel @Inject constructor(
 
         return MainUiState(
             nickName = user?.fullName.orEmpty(),
+            myRentsCount = 0,
         )
-    }
-
-    init {
-        handleIntent(MainIntent.Load)
     }
 
     override fun handleIntent(intent: MainIntent) {
         when (intent) {
             MainIntent.Load -> {
-                loadLockers()
+                refreshUser()
+                loadLockers(showLoading = mutableState.value.lockers !is ViewProperty.Content)
                 loadMyRentsCount()
             }
         }
     }
 
-    private fun loadLockers() {
+    private fun refreshUser() {
+        val user = userSession.getUser()
+        mutableState.update {
+            it.copy(nickName = user?.fullName.orEmpty())
+        }
+    }
+
+    private fun loadLockers(showLoading: Boolean = true) {
         viewModelScope.launchSafe {
-            mutableState.update {
-                it.copy(lockers = ViewProperty.Loading)
+            if (showLoading) {
+                mutableState.update {
+                    it.copy(lockers = ViewProperty.Loading)
+                }
             }
 
             try {

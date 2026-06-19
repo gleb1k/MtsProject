@@ -2,8 +2,8 @@ package ru.glebik.mtsproject.feature.main
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -14,16 +14,20 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -31,10 +35,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.delay
 import ru.glebik.mtsproject.R
 import ru.glebik.mtsproject.core.arch.util.ViewProperty
 import ru.glebik.mtsproject.ui.common.AppHeader
+import ru.glebik.mtsproject.ui.common.AppTopAlert
 import ru.glebik.mtsproject.ui.common.ContainerColumn
 import ru.glebik.mtsproject.ui.common.ContainerRow
 import ru.glebik.mtsproject.ui.common.IconContainer
@@ -49,31 +56,54 @@ fun MainScreen(
     onNavigateToProfile: () -> Unit,
     onNavigateToLockerDetail: (String) -> Unit,
     onNavigateToMyRents: () -> Unit,
+    showRentalCompleted: Boolean = false,
     viewModel: MainViewModel = hiltViewModel(),
 ) {
 
     val state = viewModel.state.collectAsStateWithLifecycle().value
+    var showRentalCompletedAlert by remember { mutableStateOf(false) }
 
-    when (val lockersState = state.lockers) {
+    LifecycleResumeEffect(Unit) {
+        viewModel.handleIntent(MainIntent.Load)
+        onPauseOrDispose { }
+    }
 
-        is ViewProperty.Loading -> {
-            LoaderScreen()
+    LaunchedEffect(showRentalCompleted) {
+        if (showRentalCompleted) {
+            showRentalCompletedAlert = true
+            delay(3_500)
+            showRentalCompletedAlert = false
+        }
+    }
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        when (val lockersState = state.lockers) {
+
+            is ViewProperty.Loading -> {
+                LoaderScreen()
+            }
+
+            is ViewProperty.Content -> {
+                MainContent(
+                    nickName = state.nickName,
+                    lockers = lockersState.content,
+                    myRentsCount = state.myRentsCount,
+                    onNavigateToProfile = onNavigateToProfile,
+                    onNavigateToLockerDetail = onNavigateToLockerDetail,
+                    onNavigateToMyRents = onNavigateToMyRents,
+                )
+            }
+
+            is ViewProperty.Error -> {
+                ErrorScreen(lockersState.errorMessage.asString())
+            }
         }
 
-        is ViewProperty.Content -> {
-            MainContent(
-                nickName = state.nickName,
-                lockers = lockersState.content,
-                myRentsCount = state.myRentsCount,
-                onNavigateToProfile = onNavigateToProfile,
-                onNavigateToLockerDetail = onNavigateToLockerDetail,
-                onNavigateToMyRents = onNavigateToMyRents,
-            )
-        }
-
-        is ViewProperty.Error -> {
-            ErrorScreen(lockersState.errorMessage.asString())
-        }
+        AppTopAlert(
+            message = "Аренда завершена",
+            visible = showRentalCompletedAlert,
+            modifier = Modifier.align(Alignment.TopCenter),
+        )
     }
 }
 
@@ -98,30 +128,21 @@ private fun MainContent(
             bottomPadding = 24.dp,
             endContent = {
                 Row(
-                    verticalAlignment = Alignment.CenterVertically
+                    modifier = Modifier
+                        .padding(end = 16.dp)
+                        .clip(RoundedCornerShape(percent = 50))
+                        .background(AppTheme.colors.frame.onPrimary.copy(alpha = 0.2f))
+                        .clickable(onClick = onNavigateToProfile)
+                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    IconButton(
-                        onClick = onNavigateToProfile
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.person_24),
-                            contentDescription = null,
-                            tint = AppTheme.colors.frame.onPrimary,
-                            modifier = Modifier.size(24.dp),
-                        )
-                    }
-
                     Text(
                         text = nickName,
                         style = AppTheme.typography.body,
                         color = AppTheme.colors.frame.onPrimary,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.clickable {
-                            onNavigateToProfile()
-                        }
+                        fontWeight = FontWeight.Medium,
                     )
-
-                    Spacer(modifier = Modifier.width(8.dp))
                 }
             }
         )
@@ -229,7 +250,6 @@ private fun LockerItem(
     item: LockerUiModel,
     onClick: () -> Unit,
 ) {
-    val interactionSource = remember { MutableInteractionSource() }
 
     ContainerColumn(
         contentPadding = PaddingValues(16.dp),
@@ -237,7 +257,6 @@ private fun LockerItem(
             .fillMaxWidth()
             .clickable(
                 onClick = onClick,
-                interactionSource = interactionSource,
             ),
     ) {
         Row(

@@ -11,6 +11,7 @@ import ru.glebik.mtsproject.feature.rents_api.domain.model.Rental
 
 data class RentDetailUiModel(
     val id: String,
+    val cellId: String,
     val cellNumber: Int,
     val cellSize: CellSize,
     val cellSizeLabel: String,
@@ -31,6 +32,7 @@ fun Rental.toDetailUiModel(
 
     return RentDetailUiModel(
         id = id,
+        cellId = cellId,
         cellNumber = cell?.number ?: 0,
         cellSize = size,
         cellSizeLabel = size.label,

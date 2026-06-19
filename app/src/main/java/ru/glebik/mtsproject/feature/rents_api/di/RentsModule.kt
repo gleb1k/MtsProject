@@ -10,6 +10,8 @@ import retrofit2.Retrofit
 import retrofit2.create
 import ru.glebik.mtsproject.feature.rents_api.data.RentsApi
 import ru.glebik.mtsproject.feature.rents_api.data.RentsRepositoryImpl
+import ru.glebik.mtsproject.feature.rents_api.domain.CloseRentalUseCase
+import ru.glebik.mtsproject.feature.rents_api.domain.CloseRentalUseCaseImpl
 import ru.glebik.mtsproject.feature.rents_api.domain.CreateRentalUseCase
 import ru.glebik.mtsproject.feature.rents_api.domain.CreateRentalUseCaseImpl
 import ru.glebik.mtsproject.feature.rents_api.domain.GetRentsCountUseCase
@@ -53,6 +55,12 @@ abstract class RentsModule {
     abstract fun bindStartRentalUseCase(
         impl: StartRentalUseCaseImpl,
     ): StartRentalUseCase
+
+    @Binds
+    @Singleton
+    abstract fun bindCloseRentalUseCase(
+        impl: CloseRentalUseCaseImpl,
+    ): CloseRentalUseCase
 
     companion object {
 
