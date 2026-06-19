@@ -43,7 +43,7 @@ import ru.glebik.mtsproject.ui.util.asString
 
 @Composable
 fun CellActivationScreen(
-    lockerId: Long,
+    lockerId: String,
     cellNumber: Int,
     onNavigateBack: () -> Unit,
     viewModel: CellActivationViewModel = hiltViewModel(),

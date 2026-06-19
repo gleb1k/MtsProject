@@ -38,7 +38,7 @@ class CellActivationViewModel @Inject constructor(
         }
     }
 
-    private fun loadCell(lockerId: Long, cellNumber: Int) {
+    private fun loadCell(lockerId: String, cellNumber: Int) {
         viewModelScope.launchSafe {
             mutableState.update { it.copy(cell = ViewProperty.Loading) }
 

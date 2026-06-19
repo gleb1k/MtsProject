@@ -74,7 +74,7 @@ class MainViewModel @Inject constructor(
     private fun Locker.toUiModel(): LockerUiModel {
 
         return LockerUiModel(
-            id = id.hashCode().toLong(),
+            id = id,
             name = title,
             address = address,
             currentAvailableCells = freeCells,

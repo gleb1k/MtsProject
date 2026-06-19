@@ -17,4 +17,10 @@ class LockerRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getLockerById(stationId: String): Result<LockerResponse> {
+        return runCatching {
+            api.getLockerById(stationId)
+        }
+    }
+
 }

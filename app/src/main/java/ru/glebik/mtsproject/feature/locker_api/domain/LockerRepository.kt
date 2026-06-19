@@ -6,4 +6,6 @@ import ru.glebik.mtsproject.feature.locker_api.data.model.LockerResponse
 interface LockerRepository {
 
     suspend fun getLockers(): Result<List<LockerResponse>>
+
+    suspend fun getLockerById(stationId: String): Result<LockerResponse>
 }

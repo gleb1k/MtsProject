@@ -10,6 +10,8 @@ import retrofit2.Retrofit
 import retrofit2.create
 import ru.glebik.mtsproject.feature.locker_api.data.LockerApi
 import ru.glebik.mtsproject.feature.locker_api.data.LockerRepositoryImpl
+import ru.glebik.mtsproject.feature.locker_api.domain.GetLockerByIdUseCase
+import ru.glebik.mtsproject.feature.locker_api.domain.GetLockerByIdUseCaseImpl
 import ru.glebik.mtsproject.feature.locker_api.domain.GetLockersUseCase
 import ru.glebik.mtsproject.feature.locker_api.domain.GetLockersUseCaseImpl
 import ru.glebik.mtsproject.feature.locker_api.domain.LockerRepository
@@ -29,6 +31,12 @@ abstract class LockerModule {
     abstract fun bindGetLockersUseCase(
         impl: GetLockersUseCaseImpl,
     ): GetLockersUseCase
+
+    @Binds
+    @Singleton
+    abstract fun bindGetLockerByIdUseCase(
+        impl: GetLockerByIdUseCaseImpl,
+    ): GetLockerByIdUseCase
 
     companion object {
 

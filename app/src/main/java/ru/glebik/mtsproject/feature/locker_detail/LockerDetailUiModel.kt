@@ -2,6 +2,8 @@ package ru.glebik.mtsproject.feature.locker_detail
 
 import androidx.compose.ui.graphics.Color
 import ru.glebik.mtsproject.R
+import ru.glebik.mtsproject.feature.locker_api.domain.model.Locker
+import ru.glebik.mtsproject.feature.locker_cell_api.domain.model.LockerCell
 import ru.glebik.mtsproject.ui.theme.Colors
 
 enum class CellSize(val label: String) {
@@ -18,7 +20,7 @@ data class CellUiModel(
 )
 
 data class LockerDetailUiModel(
-    val id: Long,
+    val id: String,
     val name: String,
     val address: String,
     val availableCount: Int,
@@ -73,40 +75,32 @@ fun CellSize.toStyle(colors: Colors.Icon, isOccupied: Boolean): CellStyle {
     }
 }
 
-fun stubLockerDetail(lockerId: Long): LockerDetailUiModel {
-    val cells = when (lockerId) {
-        1L -> listOf(
-            CellUiModel(number = 101, pricePerHour = 50, size = CellSize.Small, isOccupied = false),
-            CellUiModel(number = 102, pricePerHour = 50, size = CellSize.Small, isOccupied = false),
-            CellUiModel(number = 103, pricePerHour = 80, size = CellSize.Medium, isOccupied = false),
-            CellUiModel(number = 106, pricePerHour = 150, size = CellSize.Large, isOccupied = false),
-            CellUiModel(number = 104, pricePerHour = 50, size = CellSize.Small, isOccupied = true),
-            CellUiModel(number = 105, pricePerHour = 150, size = CellSize.Large, isOccupied = true),
-        )
-
-        else -> listOf(
-            CellUiModel(number = 201, pricePerHour = 50, size = CellSize.Small, isOccupied = false),
-            CellUiModel(number = 202, pricePerHour = 80, size = CellSize.Medium, isOccupied = false),
-            CellUiModel(number = 203, pricePerHour = 150, size = CellSize.Large, isOccupied = true),
-        )
-    }
-
-    val lockerInfo = when (lockerId) {
-        1L -> "Постомат №1" to "ул. Ленина, 45"
-        2L -> "Постомат №2" to "ул. Пушкина, 228"
-        else -> "Постомат №$lockerId" to "ул. Мира, 1337"
-    }
-
-    val availableCount = cells.count { !it.isOccupied }
-    val occupiedCount = cells.count { it.isOccupied }
-
+fun Locker.toDetailUiModel(cells: List<LockerCell>): LockerDetailUiModel {
     return LockerDetailUiModel(
-        id = lockerId,
-        name = lockerInfo.first,
-        address = lockerInfo.second,
-        availableCount = availableCount,
-        occupiedCount = occupiedCount,
-        totalCount = cells.size,
-        cells = cells,
+        id = id,
+        name = title,
+        address = address,
+        availableCount = freeCells,
+        occupiedCount = occupiedCells,
+        totalCount = totalCells,
+        cells = cells.map { it.toUiModel() },
     )
+}
+
+fun LockerCell.toUiModel(): CellUiModel {
+    return CellUiModel(
+        number = number,
+        pricePerHour = hourlyPrice.toDoubleOrNull()?.toInt() ?: 0,
+        size = size.toCellSize(),
+        isOccupied = status != LockerCell.Status.AVAILABLE,
+    )
+}
+
+private fun String.toCellSize(): CellSize {
+    return when (uppercase()) {
+        "SMALL" -> CellSize.Small
+        "MEDIUM" -> CellSize.Medium
+        "LARGE" -> CellSize.Large
+        else -> CellSize.Medium
+    }
 }

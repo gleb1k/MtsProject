@@ -47,7 +47,7 @@ import ru.glebik.mtsproject.ui.util.asString
 @Composable
 fun MainScreen(
     onNavigateToProfile: () -> Unit,
-    onNavigateToLockerDetail: (Long) -> Unit,
+    onNavigateToLockerDetail: (String) -> Unit,
     onNavigateToMyRents: () -> Unit,
     viewModel: MainViewModel = hiltViewModel(),
 ) {
@@ -83,7 +83,7 @@ private fun MainContent(
     lockers: List<LockerUiModel>,
     myRentsCount: Int,
     onNavigateToProfile: () -> Unit,
-    onNavigateToLockerDetail: (Long) -> Unit,
+    onNavigateToLockerDetail: (String) -> Unit,
     onNavigateToMyRents: () -> Unit,
 ) {
 

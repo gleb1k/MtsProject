@@ -7,12 +7,14 @@ import kotlinx.coroutines.flow.update
 import ru.glebik.mtsproject.core.arch.BaseViewModel
 import ru.glebik.mtsproject.core.arch.util.ViewProperty
 import ru.glebik.mtsproject.core.util.UiText
-import ru.glebik.mtsproject.feature.locker_detail.data.LockerDetailRepository
+import ru.glebik.mtsproject.feature.locker_api.domain.GetLockerByIdUseCase
+import ru.glebik.mtsproject.feature.locker_cell_api.domain.GetLockerCellsUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class LockerDetailViewModel @Inject constructor(
-    private val repository: LockerDetailRepository,
+    private val getLockerByIdUseCase: GetLockerByIdUseCase,
+    private val getLockerCellsUseCase: GetLockerCellsUseCase,
 ) : BaseViewModel<LockerDetailUiState, LockerDetailEffect, LockerDetailIntent>() {
 
     override fun initialState(): LockerDetailUiState = LockerDetailUiState()
@@ -24,21 +26,19 @@ class LockerDetailViewModel @Inject constructor(
         }
     }
 
-    private fun loadLocker(lockerId: Long) {
+    private fun loadLocker(lockerId: String) {
         viewModelScope.launchSafe {
             mutableState.update {
-                it.copy(
-                    locker = ViewProperty.Loading,
-                )
+                it.copy(locker = ViewProperty.Loading)
             }
 
             try {
-                val data = repository.getLockerDetail(lockerId)
+                val locker = getLockerByIdUseCase(lockerId).getOrThrow()
+                val cells = getLockerCellsUseCase(lockerId).getOrThrow()
+                val data = locker.toDetailUiModel(cells)
 
                 mutableState.update {
-                    it.copy(
-                        locker = ViewProperty.Content(data),
-                    )
+                    it.copy(locker = ViewProperty.Content(data))
                 }
             } catch (e: Exception) {
                 Log.e("LockerDetailVM", "Ошибка загрузки локера", e)

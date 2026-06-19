@@ -10,7 +10,7 @@ data class LockerDetailUiState(
 ) : UiState
 
 sealed interface LockerDetailIntent : UiIntent {
-    data class Load(val lockerId: Long) : LockerDetailIntent
+    data class Load(val lockerId: String) : LockerDetailIntent
     data object Back : LockerDetailIntent
 }
 

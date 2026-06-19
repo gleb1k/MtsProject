@@ -20,12 +20,12 @@ data object ProfileNavKey : NavKey
 
 @Serializable
 data class LockerDetailNavKey(
-    val lockerId: Long,
+    val lockerId: String,
 ) : NavKey
 
 @Serializable
 data class CellActivationNavKey(
-    val lockerId: Long,
+    val lockerId: String,
     val cellNumber: Int,
 ) : NavKey
 

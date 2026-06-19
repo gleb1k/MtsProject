@@ -22,7 +22,7 @@ data class CellActivationUiState(
 ) : UiState
 
 sealed interface CellActivationIntent : UiIntent {
-    data class Load(val lockerId: Long, val cellNumber: Int) : CellActivationIntent
+    data class Load(val lockerId: String, val cellNumber: Int) : CellActivationIntent
     data class CardNumberChanged(val value: String) : CellActivationIntent
     data class ExpiryDateChanged(val value: String) : CellActivationIntent
     data class CvvChanged(val value: String) : CellActivationIntent

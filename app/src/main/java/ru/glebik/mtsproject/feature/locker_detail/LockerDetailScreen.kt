@@ -38,7 +38,7 @@ import ru.glebik.mtsproject.ui.util.asString
 
 @Composable
 fun LockerDetailScreen(
-    lockerId: Long,
+    lockerId: String,
     onNavigateBack: () -> Unit,
     onNavigateToCellActivation: (Int) -> Unit,
     viewModel: LockerDetailViewModel = hiltViewModel(),

@@ -11,8 +11,6 @@ data class LockerCell(
     val createdAt: String,
 ) {
     enum class Status {
-        AVAILABLE,
-        OCCUPIED,
-        MAINTENANCE,
+        AVAILABLE, RESERVED, ACTIVE, PAYMENT, BLOCKED, OFFLINE
     }
 }
