@@ -15,4 +15,5 @@ sealed interface MyRentsIntent : UiIntent {
 
 sealed interface MyRentsEffect : UiEffect {
     data object NavigateBack : MyRentsEffect
+    data class NavigateToRentDetail(val rentalId: String) : MyRentsEffect
 }

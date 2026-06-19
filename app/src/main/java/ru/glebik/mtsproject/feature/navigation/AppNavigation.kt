@@ -23,6 +23,7 @@ import ru.glebik.mtsproject.feature.main.MainScreen
 import ru.glebik.mtsproject.feature.my_rents.MyRentsScreen
 import ru.glebik.mtsproject.feature.onboarding.OnboardingScreen
 import ru.glebik.mtsproject.feature.profile.ProfileScreen
+import ru.glebik.mtsproject.feature.rent_detail.RentDetailScreen
 
 const val TRANSITION_ANIMATION_DURATION_MS = 350
 
@@ -113,6 +114,16 @@ fun AppNavigation(
 
             entry<MyRentsNavKey> {
                 MyRentsScreen(
+                    onNavigateBack = { backStack.removeLastOrNull() },
+                    onNavigateToRentDetail = { rentalId ->
+                        backStack.add(RentDetailNavKey(rentalId))
+                    },
+                )
+            }
+
+            entry<RentDetailNavKey> { key ->
+                RentDetailScreen(
+                    rentalId = key.rentalId,
                     onNavigateBack = { backStack.removeLastOrNull() },
                 )
             }

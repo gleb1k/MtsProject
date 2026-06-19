@@ -1,6 +1,7 @@
 package ru.glebik.mtsproject.feature.my_rents
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,9 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -30,11 +29,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
-import ru.glebik.mtsproject.core.time.DateTime
 import ru.glebik.mtsproject.R
 import ru.glebik.mtsproject.core.arch.util.ViewProperty
+import ru.glebik.mtsproject.core.time.DateTime
 import ru.glebik.mtsproject.ui.common.AppBadge
 import ru.glebik.mtsproject.ui.common.AppHeader
 import ru.glebik.mtsproject.ui.common.ContainerColumn
@@ -46,6 +44,7 @@ import ru.glebik.mtsproject.ui.util.asString
 @Composable
 fun MyRentsScreen(
     onNavigateBack: () -> Unit,
+    onNavigateToRentDetail: (String) -> Unit,
     viewModel: MyRentsViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle().value
@@ -54,6 +53,7 @@ fun MyRentsScreen(
         viewModel.effect.collectLatest { effect ->
             when (effect) {
                 MyRentsEffect.NavigateBack -> onNavigateBack()
+                is MyRentsEffect.NavigateToRentDetail -> onNavigateToRentDetail(effect.rentalId)
             }
         }
     }
@@ -64,6 +64,7 @@ fun MyRentsScreen(
         is ViewProperty.Content -> MyRentsContent(
             rents = rentsState.content,
             onBackClick = viewModel::onNavigateBack,
+            onRentClick = viewModel::onRentClick,
         )
 
         is ViewProperty.Error -> ErrorScreen(rentsState.errorMessage.asString())
@@ -74,8 +75,9 @@ fun MyRentsScreen(
 private fun MyRentsContent(
     rents: List<RentUiModel>,
     onBackClick: () -> Unit,
+    onRentClick: (String) -> Unit,
 ) {
-    val nowMillis = rememberCurrentTimeMillis()
+    val nowMillis = rememberRentNowMillis()
 
     Column(
         modifier = Modifier
@@ -106,27 +108,12 @@ private fun MyRentsContent(
                     RentItem(
                         rent = rent,
                         nowMillis = nowMillis,
+                        onClick = { onRentClick(rent.id) },
                     )
                 }
             }
         }
     }
-}
-
-@Composable
-private fun rememberCurrentTimeMillis(
-    updateIntervalMillis: Long = 1_000L,
-): Long {
-    var nowMillis by remember { mutableLongStateOf(System.currentTimeMillis()) }
-
-    LaunchedEffect(updateIntervalMillis) {
-        while (true) {
-            nowMillis = System.currentTimeMillis()
-            delay(updateIntervalMillis)
-        }
-    }
-
-    return nowMillis
 }
 
 @Composable
@@ -178,6 +165,7 @@ private fun EmptyRentsList() {
 private fun RentItem(
     rent: RentUiModel,
     nowMillis: Long,
+    onClick: () -> Unit,
 ) {
     val now = remember(nowMillis) { DateTime.fromMillis(nowMillis) }
 
@@ -193,7 +181,9 @@ private fun RentItem(
 
     ContainerColumn(
         contentPadding = PaddingValues(16.dp),
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
     ) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -266,16 +256,5 @@ private fun RentDetailRow(
             color = AppTheme.colors.text.secondary,
             modifier = Modifier.padding(start = 8.dp),
         )
-    }
-}
-
-private fun RentUiModel.RentStatus.toBadgeText(): String {
-    return when (this) {
-        RentUiModel.RentStatus.ACTIVE -> "Активно"
-        RentUiModel.RentStatus.WAITING_CLOSE -> "Ждет закрытия"
-        RentUiModel.RentStatus.PAYMENT -> "Ждет оплаты"
-        RentUiModel.RentStatus.COMPLETED -> "Завершена"
-        RentUiModel.RentStatus.CANCELLED -> "Отменена"
-        RentUiModel.RentStatus.OVERDUE -> "Просрочена"
     }
 }

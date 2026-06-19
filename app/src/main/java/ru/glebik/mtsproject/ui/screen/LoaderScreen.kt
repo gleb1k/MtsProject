@@ -1,5 +1,6 @@
 package ru.glebik.mtsproject.ui.screen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.systemBarsPadding
@@ -14,7 +15,7 @@ fun LoaderScreen() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .systemBarsPadding(),
+            .background(AppTheme.colors.frame.background),
         contentAlignment = Alignment.Center
     ) {
         CircularProgressIndicator(

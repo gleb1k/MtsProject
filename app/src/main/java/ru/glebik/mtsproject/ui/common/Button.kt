@@ -143,6 +143,59 @@ fun PrimaryIconButton(
 }
 
 @Composable
+fun DangerIconButton(
+    text: String,
+    iconRes: Int? = null,
+    onClick: () -> Unit,
+    loading: Boolean = false,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(AppTheme.shapes.default)
+            .background(
+                if (!loading) DangerColor
+                else DangerColor.copy(alpha = 0.5f)
+            )
+            .clickable(
+                enabled = !loading,
+                onClick = onClick,
+            )
+            .padding(vertical = 16.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            if (loading) {
+                CircularProgressIndicator(
+                    color = Color.White,
+                    strokeWidth = 2.dp,
+                    modifier = Modifier.size(20.dp),
+                )
+            } else {
+                iconRes?.let {
+                    Icon(
+                        painter = painterResource(iconRes),
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(20.dp),
+                    )
+                }
+            }
+
+            Text(
+                text = text,
+                style = AppTheme.typography.button.copy(fontWeight = FontWeight.Bold),
+                color = Color.White,
+            )
+        }
+    }
+}
+
+@Composable
 fun DangerOutlinedButton(
     text: String,
     iconRes: Int,

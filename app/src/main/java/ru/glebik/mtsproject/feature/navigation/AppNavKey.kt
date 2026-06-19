@@ -30,3 +30,8 @@ data class CellActivationNavKey(
 
 @Serializable
 data object MyRentsNavKey : NavKey
+
+@Serializable
+data class RentDetailNavKey(
+    val rentalId: String,
+) : NavKey

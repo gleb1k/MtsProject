@@ -72,4 +72,10 @@ class MyRentsViewModel @Inject constructor(
             mutableEffect.emit(MyRentsEffect.NavigateBack)
         }
     }
+
+    fun onRentClick(rentalId: String) {
+        viewModelScope.launchSafe {
+            mutableEffect.emit(MyRentsEffect.NavigateToRentDetail(rentalId))
+        }
+    }
 }

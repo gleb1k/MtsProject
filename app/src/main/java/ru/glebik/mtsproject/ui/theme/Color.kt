@@ -31,7 +31,12 @@ internal val LightColorPalette = Colors(
         background = Color(0xFFf9fafb),
         divider = Color(0xFFEFF1F4),
         error = Color(0xFFEF4444),
-    )
+    ),
+    warning = Colors.Warning(
+        background = Color(0xFFFFF7ED),
+        border = Color(0xFFFCD9B6),
+        text = Color(0xFF9A4D16),
+    ),
 )
 
 internal val DarkColorPalette = Colors(
@@ -63,13 +68,19 @@ internal val DarkColorPalette = Colors(
         background = Color(0xFF0B0F19),
         divider = Color(0xFF31363C),
         error = Color(0xFFEF4444),
-    )
+    ),
+    warning = Colors.Warning(
+        background = Color(0xFF431407),
+        border = Color(0xFF9A3412),
+        text = Color(0xFFFED7AA),
+    ),
 )
 
 data class Colors(
     val icon: Icon,
     val text: Text,
     val frame: Frame,
+    val warning: Warning,
 ) {
     data class Icon(
         val blue: Color,
@@ -101,5 +112,11 @@ data class Colors(
         val background: Color,
         val divider: Color,
         val error: Color,
+    )
+
+    data class Warning(
+        val background: Color,
+        val border: Color,
+        val text: Color,
     )
 }
