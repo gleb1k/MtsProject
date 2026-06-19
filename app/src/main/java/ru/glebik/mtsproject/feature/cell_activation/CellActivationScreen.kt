@@ -257,6 +257,7 @@ private fun PaymentCard(
             onValueChange = onCardNumberChange,
             placeholder = "1234 5678 9012 3456",
             keyboardType = KeyboardType.Number,
+            visualTransformation = CardNumberVisualTransformation,
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -271,6 +272,7 @@ private fun PaymentCard(
                 onValueChange = onExpiryDateChange,
                 placeholder = "MM/YY",
                 keyboardType = KeyboardType.Number,
+                visualTransformation = ExpiryDateVisualTransformation,
                 modifier = Modifier.weight(1f),
             )
 

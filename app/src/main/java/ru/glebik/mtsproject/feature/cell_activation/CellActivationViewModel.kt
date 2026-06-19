@@ -28,7 +28,7 @@ class CellActivationViewModel @Inject constructor(
             is CellActivationIntent.CardNumberChanged -> {
                 mutableState.update {
                     it.copy(
-                        cardNumber = formatCardNumber(intent.value),
+                        cardNumber = filterCardNumberDigits(intent.value),
                         submitError = null,
                     )
                 }
@@ -37,7 +37,7 @@ class CellActivationViewModel @Inject constructor(
             is CellActivationIntent.ExpiryDateChanged -> {
                 mutableState.update {
                     it.copy(
-                        expiryDate = formatExpiryDate(intent.value),
+                        expiryDate = filterExpiryDateDigits(intent.value),
                         submitError = null,
                     )
                 }
@@ -46,7 +46,7 @@ class CellActivationViewModel @Inject constructor(
             is CellActivationIntent.CvvChanged -> {
                 mutableState.update {
                     it.copy(
-                        cvv = formatCvv(intent.value),
+                        cvv = filterCvvDigits(intent.value),
                         submitError = null,
                     )
                 }

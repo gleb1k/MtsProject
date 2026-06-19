@@ -31,6 +31,7 @@ fun AppTextField(
     modifier: Modifier = Modifier,
     placeholder: String = "",
     keyboardType: KeyboardType = KeyboardType.Text,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
     isPassword: Boolean = false,
     isPasswordVisible: Boolean = false,
     onTogglePasswordVisibility: (() -> Unit)? = null,
@@ -65,10 +66,9 @@ fun AppTextField(
                 singleLine = true,
                 cursorBrush = SolidColor(AppTheme.colors.frame.primary),
                 keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
-                visualTransformation = if (isPassword && !isPasswordVisible) {
-                    PasswordVisualTransformation()
-                } else {
-                    VisualTransformation.None
+                visualTransformation = when {
+                    isPassword && !isPasswordVisible -> PasswordVisualTransformation()
+                    else -> visualTransformation
                 },
                 decorationBox = { innerTextField ->
                     if (value.isEmpty()) {
