@@ -13,6 +13,8 @@ import ru.glebik.mtsproject.feature.payment.data.api.PaymentApi
 import ru.glebik.mtsproject.feature.payment.domain.PaymentRepository
 import ru.glebik.mtsproject.feature.payment.domain.usecase.CreatePaymentMethodUseCase
 import ru.glebik.mtsproject.feature.payment.domain.usecase.CreatePaymentMethodUseCaseImpl
+import ru.glebik.mtsproject.feature.payment.domain.usecase.GetPaymentMethodByIdUseCase
+import ru.glebik.mtsproject.feature.payment.domain.usecase.GetPaymentMethodByIdUseCaseImpl
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -29,6 +31,12 @@ abstract class PaymentModule {
     abstract fun bindCreatePaymentMethodUseCase(
         impl: CreatePaymentMethodUseCaseImpl,
     ): CreatePaymentMethodUseCase
+
+    @Binds
+    @Singleton
+    abstract fun bindGetPaymentMethodByIdUseCase(
+        impl: GetPaymentMethodByIdUseCaseImpl,
+    ): GetPaymentMethodByIdUseCase
 
     companion object {
 

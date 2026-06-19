@@ -9,6 +9,7 @@ import ru.glebik.mtsproject.core.arch.util.ViewProperty
 import ru.glebik.mtsproject.core.util.UiText
 import ru.glebik.mtsproject.feature.locker_api.domain.GetLockerByIdUseCase
 import ru.glebik.mtsproject.feature.locker_cell_api.domain.GetLockerCellByIdUseCase
+import ru.glebik.mtsproject.feature.payment.domain.usecase.GetPaymentMethodByIdUseCase
 import ru.glebik.mtsproject.feature.rents_api.domain.GetRentsUseCase
 import ru.glebik.mtsproject.feature.rents_api.domain.model.Rental
 import javax.inject.Inject
@@ -18,6 +19,7 @@ class RentDetailViewModel @Inject constructor(
     private val getRentsUseCase: GetRentsUseCase,
     private val getLockerCellByIdUseCase: GetLockerCellByIdUseCase,
     private val getLockerByIdUseCase: GetLockerByIdUseCase,
+    private val getPaymentMethodByIdUseCase: GetPaymentMethodByIdUseCase,
 ) : BaseViewModel<RentDetailUiState, RentDetailEffect, RentDetailIntent>() {
 
     override fun initialState(): RentDetailUiState = RentDetailUiState()
@@ -63,7 +65,10 @@ class RentDetailViewModel @Inject constructor(
     private suspend fun Rental.toDetailUiModel(): RentDetailUiModel {
         val cell = getLockerCellByIdUseCase(cellId).getOrNull()
         val locker = cell?.let { getLockerByIdUseCase(it.stationId).getOrNull() }
-        return toDetailUiModel(cell = cell, locker = locker)
+        val maskedPan = paymentMethodId?.let { methodId ->
+            getPaymentMethodByIdUseCase(methodId).getOrNull()?.maskedPan
+        }
+        return toDetailUiModel(cell = cell, locker = locker, maskedPan = maskedPan)
     }
 
     private fun endRental() {

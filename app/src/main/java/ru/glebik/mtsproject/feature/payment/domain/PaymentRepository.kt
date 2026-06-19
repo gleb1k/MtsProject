@@ -11,4 +11,6 @@ interface PaymentRepository {
         token: String,
         isVerified: Boolean,
     ): Result<PaymentMethod>
+
+    suspend fun getPaymentMethodById(methodId: String): Result<PaymentMethod>
 }

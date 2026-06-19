@@ -30,4 +30,10 @@ class PaymentRepositoryImpl @Inject constructor(
             ).toDomain()
         }
     }
+
+    override suspend fun getPaymentMethodById(methodId: String): Result<PaymentMethod> {
+        return runCatching {
+            api.getPaymentMethod(methodId).toDomain()
+        }
+    }
 }
